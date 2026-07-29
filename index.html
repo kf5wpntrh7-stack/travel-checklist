@@ -6,669 +6,621 @@
 <meta name="theme-color" content="#263849">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>出國行李清單 v2</title>
+<title>手機圖片拼接 v2</title>
 <style>
-:root {
-  --bg:#eef1f4; --card:#fff; --navy:#263849; --navy2:#3d566d; --blue:#7e9ebd;
-  --line:#dfe5ea; --text:#23303a; --muted:#73808a; --ready:#3f8d62;
-  --todo:#d39a2c; --buy:#c85f5f; --skip:#8b9197; --shadow:0 7px 24px rgba(30,44,57,.09);
+:root{
+  --bg:#eef1f4;
+  --card:#fff;
+  --navy:#263849;
+  --navy2:#3e566c;
+  --line:#dce3e8;
+  --text:#22303b;
+  --muted:#72808b;
+  --soft:#e9eef2;
+  --danger:#a24f4f;
+  --shadow:0 7px 24px rgba(31,45,57,.08);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif}
-button,input,select,textarea{font:inherit}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;
+}
+button,input,select{font:inherit}
 button{-webkit-tap-highlight-color:transparent}
-.top{position:sticky;top:0;z-index:30;background:linear-gradient(145deg,var(--navy),var(--navy2));color:#fff;padding:calc(12px + env(safe-area-inset-top)) 14px 12px;box-shadow:0 5px 18px rgba(21,34,45,.2)}
-.toprow{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.title{font-size:20px;font-weight:800}
-.subtitle{font-size:12px;opacity:.78;margin-top:2px}
-.icon-btn{border:0;background:rgba(255,255,255,.13);color:#fff;border-radius:11px;padding:9px 11px}
-.progress-track{height:7px;background:rgba(255,255,255,.18);border-radius:999px;margin-top:11px;overflow:hidden}
-.progress-bar{height:100%;width:0;background:#e8f3ff;border-radius:999px;transition:.25s}
-.stats{display:flex;gap:7px;margin-top:9px;overflow:auto;scrollbar-width:none}
-.stat{white-space:nowrap;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.1);border-radius:999px;padding:5px 9px;font-size:12px}
-main{max-width:720px;margin:auto;padding:11px 11px calc(90px + env(safe-area-inset-bottom))}
-.trip-card,.search-card{background:var(--card);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden}
-.trip-summary{display:flex;align-items:center;gap:10px;padding:12px 13px;cursor:pointer}
-.trip-icon{width:40px;height:40px;border-radius:12px;background:#e7eef5;display:grid;place-items:center;font-size:21px}
-.trip-main{flex:1;min-width:0}
-.trip-name{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.trip-sub{font-size:12px;color:var(--muted);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.chev{color:#82909b;transition:.2s}
-.trip-card.open .chev{transform:rotate(180deg)}
-.trip-edit{display:none;border-top:1px solid var(--line);padding:12px}
-.trip-card.open .trip-edit{display:block}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.field label{display:block;color:var(--muted);font-size:12px;margin:0 0 5px}
-.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;color:var(--text)}
-.warning{grid-column:1/-1;background:#fff4cf;border:1px solid #ecd788;border-radius:10px;padding:9px 10px;font-size:12px;line-height:1.45}
-.search-card{padding:10px}
-.search-row{display:flex;gap:8px}
-.search-row input{flex:1;min-width:0;border:1px solid var(--line);border-radius:11px;padding:10px 12px}
-.soft-btn{border:0;background:#e9eef2;color:#334553;border-radius:11px;padding:9px 11px;font-weight:700}
-.category{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:9px;overflow:hidden;box-shadow:0 3px 13px rgba(31,45,57,.05)}
-.cat-head{width:100%;border:0;background:#fff;color:var(--text);display:flex;align-items:center;gap:10px;padding:13px;text-align:left}
-.cat-title{font-weight:800;flex:1}
-.cat-count{font-size:12px;color:var(--muted)}
-.cat-chevron{color:#84919c;transition:.2s}
-.category.open .cat-chevron{transform:rotate(90deg)}
-.cat-body{display:none;border-top:1px solid var(--line)}
-.category.open .cat-body{display:block}
-.item{display:grid;grid-template-columns:42px 1fr auto;gap:8px;align-items:center;padding:10px 11px;border-top:1px solid var(--line);min-height:61px}
-.item:first-child{border-top:0}
-.check{width:34px;height:34px;border-radius:50%;border:2px solid #bcc6ce;background:#fff;display:grid;place-items:center;font-size:18px;color:#fff}
-.check.ready{background:var(--ready);border-color:var(--ready)}
-.check.buy{background:#fff4f4;border-color:var(--buy);color:var(--buy)}
-.check.skip{background:#eff1f2;border-color:var(--skip);color:var(--skip)}
-.item-main{min-width:0}
-.item-name{font-weight:750;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.item-meta{font-size:12px;color:var(--muted);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.item-right{display:flex;align-items:center;gap:6px}
-.qty{min-width:27px;text-align:center;background:#edf1f4;border-radius:8px;padding:5px 7px;font-size:12px;font-weight:800}
-.edit-arrow{border:0;background:transparent;color:#87939d;font-size:18px;padding:7px 2px 7px 5px}
-.empty{padding:25px;text-align:center;color:var(--muted)}
-.bottom{position:fixed;left:0;right:0;bottom:0;z-index:35;background:rgba(250,251,252,.96);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 8px calc(8px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-.filter{border:0;background:transparent;color:#65737e;border-radius:10px;padding:9px 3px;font-size:12px;font-weight:750}
-.filter.active{background:var(--navy);color:#fff}
-.fab{position:fixed;right:14px;bottom:calc(72px + env(safe-area-inset-bottom));z-index:34;border:0;border-radius:999px;background:var(--navy);color:#fff;padding:13px 17px;font-weight:800;box-shadow:0 9px 23px rgba(27,42,54,.28)}
-.modal{position:fixed;inset:0;background:rgba(17,27,35,.48);z-index:60;display:none;align-items:flex-end}
-.modal.show{display:flex}
-.sheet{width:100%;max-height:90vh;overflow:auto;background:#fff;border-radius:20px 20px 0 0;padding:10px 15px calc(17px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(0,0,0,.12)}
-.grabber{width:42px;height:4px;border-radius:999px;background:#d4d9dd;margin:2px auto 11px}
-.sheet h2{font-size:18px;margin:0 0 13px}
-.sheet .field{margin-bottom:10px}
-.sheet-actions{display:flex;gap:8px;margin-top:13px}
-.sheet-actions button{flex:1}
-.primary{background:var(--navy)!important;color:#fff!important}
-.danger{background:#f6e4e4!important;color:#9d4646!important}
-.menu{position:fixed;inset:0;background:rgba(17,27,35,.35);z-index:55;display:none;align-items:flex-start;justify-content:flex-end;padding:calc(58px + env(safe-area-inset-top)) 12px 0}
-.menu.show{display:flex}
-.menu-box{width:190px;background:#fff;border-radius:13px;padding:6px;box-shadow:var(--shadow)}
-.menu-box button{display:block;width:100%;border:0;background:#fff;text-align:left;padding:11px;border-radius:9px;color:var(--text)}
-.menu-box button:active{background:#eef2f5}
+header{
+  position:sticky;
+  top:0;
+  z-index:30;
+  color:#fff;
+  background:linear-gradient(145deg,var(--navy),var(--navy2));
+  padding:calc(13px + env(safe-area-inset-top)) 14px 13px;
+  box-shadow:0 5px 18px rgba(21,34,45,.2);
+}
+.header-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+h1{font-size:20px;margin:0}
+.subtitle{font-size:12px;opacity:.8;margin-top:3px}
+.reset-top{
+  border:0;background:rgba(255,255,255,.13);color:#fff;
+  border-radius:11px;padding:9px 11px;font-weight:700
+}
+main{max-width:760px;margin:auto;padding:11px 11px calc(105px + env(safe-area-inset-bottom))}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:15px;
+  box-shadow:var(--shadow);
+  margin-bottom:10px;
+  overflow:hidden;
+}
+.card-title{padding:12px 13px 5px;font-weight:800}
+.card-note{padding:0 13px 12px;font-size:12px;color:var(--muted);line-height:1.45}
+.upload-wrap{padding:12px}
+.upload-box{
+  width:100%;
+  min-height:112px;
+  border:2px dashed #aebbc5;
+  border-radius:14px;
+  background:#f8fafb;
+  display:grid;
+  place-items:center;
+  padding:18px;
+  text-align:center;
+  cursor:pointer;
+}
+.upload-icon{font-size:30px}
+.upload-main{font-weight:800;margin-top:4px}
+.upload-sub{font-size:12px;color:var(--muted);margin-top:4px}
 .hidden{display:none!important}
+.layouts{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  padding:10px 12px 13px;
+}
+.layout{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:12px;
+  min-height:72px;
+  padding:8px 5px;
+  color:var(--text);
+}
+.layout.active{background:var(--navy);border-color:var(--navy);color:#fff}
+.layout-icon{
+  width:32px;height:32px;margin:auto auto 5px;
+  display:grid;gap:2px
+}
+.layout-icon span{display:block;background:currentColor;border-radius:2px;opacity:.82}
+.icon-v{grid-template-rows:1fr 1fr}
+.icon-h{grid-template-columns:1fr 1fr}
+.icon-4{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+.icon-6{grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr)}
+.icon-9{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr)}
+.layout-label{font-size:12px;font-weight:750}
+.controls{padding:4px 12px 13px}
+.control{margin-top:10px}
+.control:first-child{margin-top:0}
+.control-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.control label{font-size:13px;font-weight:700}
+.control-value{font-size:12px;color:var(--muted)}
+input[type=range]{width:100%;accent-color:var(--navy)}
+.segment{
+  display:grid;grid-template-columns:1fr 1fr;gap:6px;
+  background:#edf1f4;border-radius:11px;padding:4px
+}
+.segment button{
+  border:0;background:transparent;border-radius:8px;padding:9px 6px;
+  color:#65737e;font-size:13px;font-weight:750
+}
+.segment button.active{background:#fff;color:var(--text);box-shadow:0 2px 7px rgba(30,44,57,.08)}
+.ratio-wrap{display:none}
+.ratio-wrap.show{display:block}
+.photo-list{padding:4px 10px 10px}
+.photo{
+  display:grid;
+  grid-template-columns:56px 1fr auto;
+  gap:9px;
+  align-items:center;
+  padding:8px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  margin-top:8px;
+  background:#fff;
+}
+.thumb{width:56px;height:56px;object-fit:cover;border-radius:9px;background:#edf1f4}
+.photo-info{min-width:0}
+.photo-name{font-size:13px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.photo-size{font-size:11px;color:var(--muted);margin-top:4px}
+.photo-actions{display:grid;grid-template-columns:repeat(2,32px);gap:4px}
+.photo-actions button{
+  width:32px;height:32px;border:0;border-radius:9px;background:var(--soft);
+  color:#485a68;font-weight:800
+}
+.photo-actions .delete{color:var(--danger)}
+.capacity{
+  display:none;
+  margin:8px 12px 12px;
+  border:1px solid #e5cf80;
+  background:#fff5cf;
+  border-radius:10px;
+  padding:9px 10px;
+  font-size:12px;
+  line-height:1.45
+}
+.capacity.show{display:block}
+.preview-wrap{padding:10px 10px 12px}
+.canvas-shell{
+  min-height:190px;
+  border-radius:13px;
+  overflow:auto;
+  background:#dfe4e8;
+  display:grid;
+  place-items:center;
+  padding:10px;
+}
+canvas{display:block;max-width:100%;height:auto;background:#fff;box-shadow:0 5px 18px rgba(31,45,57,.14)}
+.empty-preview{text-align:center;color:var(--muted);padding:35px 15px;font-size:13px}
+.bottom{
+  position:fixed;
+  left:0;right:0;bottom:0;z-index:35;
+  background:rgba(250,251,252,.96);
+  backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);
+  padding:9px 10px calc(9px + env(safe-area-inset-bottom));
+}
+.bottom-inner{max-width:760px;margin:auto;display:grid;grid-template-columns:1fr 1.35fr;gap:8px}
+.btn{
+  border:0;border-radius:12px;padding:12px 10px;font-weight:800;
+  background:var(--soft);color:var(--text)
+}
+.btn.primary{background:var(--navy);color:#fff}
+.btn:disabled{opacity:.45}
+.toast{
+  position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom));
+  transform:translateX(-50%) translateY(20px);
+  background:#263849;color:#fff;padding:9px 13px;border-radius:999px;
+  font-size:12px;opacity:0;pointer-events:none;transition:.2s;z-index:50;
+  white-space:nowrap
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 @media(min-width:700px){
-  .modal{align-items:center;justify-content:center;padding:20px}
-  .sheet{max-width:520px;border-radius:20px;padding-bottom:18px}
-  .fab{right:calc((100vw - 720px)/2 + 14px)}
+  .layouts{grid-template-columns:repeat(5,1fr)}
 }
 
-.print-view{display:none}
-@media print{
-  @page{size:A4 landscape;margin:7mm}
-  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  html,body{background:#fff!important;margin:0!important;padding:0!important}
-  body>*:not(#printView){display:none!important}
-  #printView{
-    display:block!important;
-    color:#111;
-    font-family:"Microsoft JhengHei","PingFang TC",Arial,sans-serif;
-    font-size:8.5pt;
-    line-height:1.25;
-  }
-  .print-head{
-    display:flex;
-    align-items:flex-end;
-    justify-content:space-between;
-    border-bottom:2px solid #263849;
-    padding-bottom:2.5mm;
-    margin-bottom:3mm;
-  }
-  .print-head h1{margin:0;font-size:18pt;letter-spacing:.5pt}
-  .print-head .print-progress{font-size:10pt;font-weight:700}
-  .print-info{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:1.5mm 3mm;
-    border:1px solid #aeb8c0;
-    border-radius:2mm;
-    padding:2.5mm 3mm;
-    margin-bottom:3mm;
-  }
-  .print-info-item{display:flex;gap:1.5mm;min-width:0}
-  .print-info-label{font-weight:700;white-space:nowrap}
-  .print-info-value{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .print-alert{
-    grid-column:1/-1;
-    border-top:1px solid #d2d8dd;
-    padding-top:1.5mm;
-    font-size:7.5pt;
-  }
-  .print-columns{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:3mm;
-    align-items:start;
-  }
-  .print-category{
-    border:1px solid #aeb8c0;
-    border-radius:1.8mm;
-    overflow:hidden;
-    break-inside:avoid;
-    page-break-inside:avoid;
-    margin-bottom:3mm;
-  }
-  .print-category-title{
-    background:#dce6ef;
-    border-bottom:1px solid #aeb8c0;
-    padding:1.6mm 2mm;
-    font-weight:800;
-    font-size:9.5pt;
-    display:flex;
-    justify-content:space-between;
-  }
-  .print-item{
-    display:grid;
-    grid-template-columns:5mm 1fr auto;
-    gap:1.5mm;
-    align-items:start;
-    padding:1.15mm 1.8mm;
-    border-top:1px solid #e1e5e8;
-  }
-  .print-item:first-child{border-top:0}
-  .print-check{
-    width:3.8mm;height:3.8mm;
-    border:1px solid #444;
-    display:grid;place-items:center;
-    font-size:8pt;font-weight:800;
-    margin-top:.1mm;
-  }
-  .print-item-name{font-weight:700}
-  .print-item-meta{font-size:7pt;color:#555;margin-top:.4mm}
-  .print-item-qty{white-space:nowrap;font-weight:700}
-  .print-item.buy .print-check{border-color:#9b5a00;color:#9b5a00}
-  .print-item.buy .print-item-name:after{content:" 〔待購〕";font-size:6.8pt;color:#9b5a00}
-  .print-item.skip{color:#8a8a8a;text-decoration:line-through}
-  .print-foot{
-    margin-top:2mm;
-    border-top:1px solid #b9c1c7;
-    padding-top:1.5mm;
-    text-align:right;
-    font-size:7pt;
-    color:#555;
-  }
-}
+.mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:10px 12px 0}.mode-tab{border:0;border-radius:10px;padding:10px;background:#e9eef2;color:#65737e;font-weight:800}.mode-tab.active{background:var(--navy);color:#fff}.layout-panel{display:none}.layout-panel.active{display:block}.icon-v3{grid-template-rows:repeat(3,1fr)}.icon-h3{grid-template-columns:repeat(3,1fr)}.icon-v4{grid-template-rows:repeat(4,1fr)}.icon-h4{grid-template-columns:repeat(4,1fr)}.icon-6h{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr)}.custom-grid{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}.custom-grid .big-top{grid-column:1/-1}.custom-grid .big-bottom{grid-column:1/-1;grid-row:2}.custom-grid.left-big .big-left{grid-row:1/-1}.custom-grid.right-big .big-right{grid-column:2;grid-row:1/-1}
 
 </style>
 </head>
 <body>
-<header class="top">
-  <div class="toprow">
+<header>
+  <div class="header-row">
     <div>
-      <div class="title">✈️ 出國行李清單</div>
-      <div class="subtitle">v2.1・快速整理＋A4列印</div>
+      <h1>🖼️ 手機圖片拼接</h1>
+      <div class="subtitle">拼接與格子版型</div>
     </div>
-    <button class="icon-btn" onclick="toggleMenu()">⋯</button>
-  </div>
-  <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
-  <div class="stats">
-    <div class="stat" id="statReady">已完成 0%</div>
-    <div class="stat" id="statTodo">待準備 0</div>
-    <div class="stat" id="statBuy">待購買 0</div>
+    <button class="reset-top" onclick="resetAll()">清空</button>
   </div>
 </header>
 
 <main>
-  <section class="trip-card" id="tripCard">
-    <div class="trip-summary" onclick="toggleTrip()">
-      <div class="trip-icon">🌍</div>
-      <div class="trip-main">
-        <div class="trip-name" id="tripName">尚未設定旅行目的地</div>
-        <div class="trip-sub" id="tripSub">點這裡填寫航班、天數與行李額度</div>
-      </div>
-      <div class="chev">⌄</div>
-    </div>
-    <div class="trip-edit">
-      <div class="grid">
-        <div class="field"><label>前往國家／城市</label><input id="destination" placeholder="例如：日本大阪"></div>
-        <div class="field"><label>當地天氣</label><input id="weather" placeholder="例如：20–25°C"></div>
-        <div class="field"><label>出遊天數</label><input id="days" placeholder="例如：5 天 4 夜"></div>
-        <div class="field"><label>同行旅伴</label><input id="companions" placeholder="例如：2 人"></div>
-        <div class="field"><label>去程航班</label><input id="outbound" placeholder="航空／航班／日期"></div>
-        <div class="field"><label>回程航班</label><input id="returnFlight" placeholder="航空／航班／日期"></div>
-        <div class="field"><label>隨身行李</label><input id="carryOn" placeholder="件數／尺寸"></div>
-        <div class="field"><label>托運行李</label><input id="checkedBag" placeholder="件數／重量"></div>
-        <div class="warning">⚠️ 出發前仍需確認護照效期、簽證、液體、行動電源、食品、藥品及航空公司最新規定。</div>
-      </div>
+  <section class="card" id="topUploadCard">
+    <div class="upload-wrap">
+      <label class="upload-box" for="fileInput">
+        <div>
+          <div class="upload-icon">＋</div>
+          <div class="upload-main">選擇照片</div>
+          <div class="upload-sub">可一次選多張，最多建議 20 張</div>
+        </div>
+      </label>
+      <input id="fileInput" class="hidden" type="file" accept="image/*" multiple>
     </div>
   </section>
 
-  <section class="search-card">
-    <div class="search-row">
-      <input id="searchBox" placeholder="搜尋物品、位置或備註…" oninput="render()">
-      <button class="soft-btn" onclick="collapseAll()">收合</button>
+  <section class="card">
+    <div class="card-title">選擇版型</div>
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="join" onclick="setMode('join',this)">拼接</button>
+      <button class="mode-tab" data-mode="grid" onclick="setMode('grid',this)">格子</button>
     </div>
+    <div id="joinLayouts" class="layout-panel active"><div class="layouts">
+      <button class="layout active" data-layout="vertical" onclick="setLayout('vertical',this)"><div class="layout-icon icon-v"><span></span><span></span></div><div class="layout-label">上下拼接</div></button>
+      <button class="layout" data-layout="horizontal" onclick="setLayout('horizontal',this)"><div class="layout-icon icon-h"><span></span><span></span></div><div class="layout-label">左右拼接</div></button>
+      <button class="layout" data-layout="vertical3" onclick="setLayout('vertical3',this)"><div class="layout-icon icon-v3"><span></span><span></span><span></span></div><div class="layout-label">3 張直排</div></button>
+      <button class="layout" data-layout="horizontal3" onclick="setLayout('horizontal3',this)"><div class="layout-icon icon-h3"><span></span><span></span><span></span></div><div class="layout-label">3 張橫排</div></button>
+      <button class="layout" data-layout="vertical4" onclick="setLayout('vertical4',this)"><div class="layout-icon icon-v4"><span></span><span></span><span></span><span></span></div><div class="layout-label">4 張直排</div></button>
+      <button class="layout" data-layout="horizontal4" onclick="setLayout('horizontal4',this)"><div class="layout-icon icon-h4"><span></span><span></span><span></span><span></span></div><div class="layout-label">4 張橫排</div></button>
+    </div></div>
+    <div id="gridLayouts" class="layout-panel"><div class="layouts grid-layouts">
+      <button class="layout" data-layout="grid2h" onclick="setLayout('grid2h',this)"><div class="layout-icon icon-h"><span></span><span></span></div><div class="layout-label">2 格左右</div></button>
+      <button class="layout" data-layout="grid2v" onclick="setLayout('grid2v',this)"><div class="layout-icon icon-v"><span></span><span></span></div><div class="layout-label">2 格上下</div></button>
+      <button class="layout" data-layout="grid3top" onclick="setLayout('grid3top',this)"><div class="layout-icon custom-grid"><span class="big-top"></span><span></span><span></span></div><div class="layout-label">上 1 下 2</div></button>
+      <button class="layout" data-layout="grid3left" onclick="setLayout('grid3left',this)"><div class="layout-icon custom-grid left-big"><span class="big-left"></span><span></span><span></span></div><div class="layout-label">左 1 右 2</div></button>
+      <button class="layout" data-layout="grid3bottom" onclick="setLayout('grid3bottom',this)"><div class="layout-icon custom-grid"><span></span><span></span><span class="big-bottom"></span></div><div class="layout-label">上 2 下 1</div></button>
+      <button class="layout" data-layout="grid3right" onclick="setLayout('grid3right',this)"><div class="layout-icon custom-grid right-big"><span></span><span></span><span class="big-right"></span></div><div class="layout-label">左 2 右 1</div></button>
+      <button class="layout" data-layout="grid4" onclick="setLayout('grid4',this)"><div class="layout-icon icon-4"><span></span><span></span><span></span><span></span></div><div class="layout-label">4 格</div></button>
+      <button class="layout" data-layout="grid6v" onclick="setLayout('grid6v',this)"><div class="layout-icon icon-6"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="layout-label">6 格 2×3</div></button>
+      <button class="layout" data-layout="grid6h" onclick="setLayout('grid6h',this)"><div class="layout-icon icon-6h"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="layout-label">6 格 3×2</div></button>
+      <button class="layout" data-layout="grid9" onclick="setLayout('grid9',this)"><div class="layout-icon icon-9"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="layout-label">9 格</div></button>
+    </div></div>
+    <div class="controls">
+      <div class="control"><div class="control-head"><label for="gapRange">照片間距</label><span class="control-value"><span id="gapValue">6</span> px</span></div><input id="gapRange" type="range" min="0" max="24" value="6"></div>
+      <div class="control"><div class="control-head"><label for="roundRange">照片圓角</label><span class="control-value"><span id="roundValue">0</span> px</span></div><input id="roundRange" type="range" min="0" max="30" value="0"></div>
+      <div class="control"><div class="control-head"><label>格子內照片</label></div><div class="segment"><button id="fitCover" class="active" onclick="setFit('cover')">填滿裁切</button><button id="fitContain" onclick="setFit('contain')">完整顯示</button></div></div>
+      <div class="control ratio-wrap" id="ratioWrap"><div class="control-head"><label>輸出比例</label></div><div class="segment" style="grid-template-columns:repeat(3,1fr)"><button class="ratio-btn active" data-ratio="1:1" onclick="setRatio('1:1',this)">1:1</button><button class="ratio-btn" data-ratio="4:5" onclick="setRatio('4:5',this)">4:5</button><button class="ratio-btn" data-ratio="9:16" onclick="setRatio('9:16',this)">9:16</button></div></div>
+    </div>
+    <div id="capacityNote" class="capacity"></div>
   </section>
 
-  <div id="list"></div>
+  <section class="card" id="photoCard">
+    <div class="card-title">照片順序 <span id="photoCount" style="color:var(--muted);font-size:12px"></span></div>
+    <div class="card-note">使用上下箭頭調整順序；格狀版型會依序由左到右、由上到下排列。</div>
+    <div id="photoList" class="photo-list"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-title">預覽</div>
+    <div class="preview-wrap">
+      <div class="canvas-shell">
+        <div id="emptyPreview" class="empty-preview">選擇照片後會在這裡預覽</div>
+        <canvas id="previewCanvas" class="hidden"></canvas>
+      </div>
+    </div>
+  </section>
 </main>
 
-<button class="fab" onclick="openAdd()">＋ 新增</button>
-
-<nav class="bottom">
-  <button class="filter active" data-filter="all" onclick="setFilter('all',this)">全部</button>
-  <button class="filter" data-filter="todo" onclick="setFilter('todo',this)">待準備</button>
-  <button class="filter" data-filter="buy" onclick="setFilter('buy',this)">待購買</button>
-  <button class="filter" data-filter="ready" onclick="setFilter('ready',this)">已完成</button>
-</nav>
-
-<div class="menu" id="menu" onclick="closeMenu(event)">
-  <div class="menu-box">
-    <button onclick="exportBackup()">匯出備份</button>
-    <button onclick="document.getElementById('importFile').click()">匯入備份</button>
-    <button onclick="printChecklist()">列印</button>
-    <button onclick="resetAll()">恢復原始範本</button>
-    <input id="importFile" class="hidden" type="file" accept="application/json" onchange="importBackup(event)">
+<div class="bottom">
+  <div class="bottom-inner">
+    <button class="btn" onclick="document.getElementById('fileInput').click()">＋ 加照片</button>
+    <button id="exportBtn" class="btn primary" onclick="exportJpg()" disabled>輸出／分享 JPG</button>
   </div>
 </div>
 
-<div class="modal" id="itemModal" onclick="closeSheet(event,'itemModal')">
-  <div class="sheet">
-    <div class="grabber"></div>
-    <h2 id="itemModalTitle">編輯項目</h2>
-    <input type="hidden" id="editId">
-    <div class="field"><label>分類</label><select id="editCategory"></select></div>
-    <div class="field"><label>項目名稱</label><input id="editName"></div>
-    <div class="grid">
-      <div class="field"><label>數量</label><input id="editQty" type="number" min="0"></div>
-      <div class="field"><label>狀態</label>
-        <select id="editStatus">
-          <option>待準備</option><option>✔ 已準備</option><option>待購買</option><option>✖ 不攜帶</option>
-        </select>
-      </div>
-    </div>
-    <div class="field"><label>放置位置</label>
-      <select id="editLocation">
-        <option>托運行李</option><option>手提行李</option><option>後背包</option>
-        <option>隨身小包</option><option>身上</option><option>未指定</option>
-      </select>
-    </div>
-    <div class="field"><label>備註</label><textarea id="editNote" rows="3"></textarea></div>
-    <div class="sheet-actions">
-      <button class="soft-btn danger" id="deleteBtn" onclick="deleteCurrent()">刪除</button>
-      <button class="soft-btn" onclick="hideSheet('itemModal')">取消</button>
-      <button class="soft-btn primary" onclick="saveCurrent()">儲存</button>
-    </div>
-  </div>
-</div>
-
-
-<div id="printView" class="print-view" aria-hidden="true"></div>
+<div id="toast" class="toast"></div>
 
 <script>
-const DEFAULT_ITEMS = [{"id": "item_1", "category": "🧳 行李", "name": "行李箱", "qty": 1, "status": "待準備", "location": "托運行李", "note": "填寫尺寸、顏色或辨識特徵"}, {"id": "item_2", "category": "🧳 行李", "name": "行李袋", "qty": 1, "status": "待準備", "location": "手提行李", "note": "行李箱不夠裝時可使用"}, {"id": "item_3", "category": "🧳 行李", "name": "後背包", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_4", "category": "🧳 行李", "name": "隱形腰包", "qty": 1, "status": "待準備", "location": "身上", "note": "護照、現金等重要物品"}, {"id": "item_5", "category": "🧳 行李", "name": "衣物收納壓縮袋", "qty": 2, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_6", "category": "🧳 行李", "name": "盥洗用品收納包", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_7", "category": "🧳 行李", "name": "化妝包", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_8", "category": "🧳 行李", "name": "環保購物袋", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_9", "category": "🧳 行李", "name": "行李箱束帶", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_10", "category": "🧳 行李", "name": "鎖頭", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_11", "category": "🧳 行李", "name": "行李電子秤", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_12", "category": "🧳 行李", "name": "手機掛繩", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_13", "category": "🧳 行李", "name": "頸枕", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_14", "category": "🧳 行李", "name": "眼罩", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_15", "category": "🪪 證件", "name": "機票／電子機票", "qty": 1, "status": "待準備", "location": "後背包", "note": "建議另存離線版本"}, {"id": "item_16", "category": "🪪 證件", "name": "護照", "qty": 1, "status": "待準備", "location": "身上", "note": "確認效期與空白頁"}, {"id": "item_17", "category": "🪪 證件", "name": "身分證", "qty": 1, "status": "待準備", "location": "身上", "note": ""}, {"id": "item_18", "category": "🪪 證件", "name": "簽證資料", "qty": 1, "status": "待準備", "location": "後背包", "note": "依目的地需求"}, {"id": "item_19", "category": "🪪 證件", "name": "駕照／國際駕照", "qty": 1, "status": "待準備", "location": "後背包", "note": "租車時確認需求"}, {"id": "item_20", "category": "🪪 證件", "name": "行程表", "qty": 1, "status": "待準備", "location": "後背包", "note": "地圖、導覽手冊"}, {"id": "item_21", "category": "🪪 證件", "name": "住宿確認單", "qty": 1, "status": "待準備", "location": "後背包", "note": "保留訂房紀錄"}, {"id": "item_22", "category": "🪪 證件", "name": "交通票券", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_23", "category": "🪪 證件", "name": "景點票券", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_24", "category": "🪪 證件", "name": "2 吋大頭照", "qty": 2, "status": "待準備", "location": "後背包", "note": "備用"}, {"id": "item_25", "category": "🪪 證件", "name": "鑰匙", "qty": 1, "status": "待準備", "location": "身上", "note": "家用、行李箱"}, {"id": "item_26", "category": "🪪 證件", "name": "外幣現金", "qty": 1, "status": "待準備", "location": "身上", "note": ""}, {"id": "item_27", "category": "🪪 證件", "name": "信用卡", "qty": 2, "status": "待準備", "location": "身上", "note": ""}, {"id": "item_28", "category": "🪪 證件", "name": "提款卡", "qty": 1, "status": "待準備", "location": "身上", "note": ""}, {"id": "item_29", "category": "🪪 證件", "name": "緊急聯絡資料", "qty": 1, "status": "待準備", "location": "後背包", "note": "紙本與手機各留一份"}, {"id": "item_30", "category": "🪪 證件", "name": "旅遊保險資料", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_31", "category": "🪪 證件", "name": "健康／疫苗資料", "qty": 1, "status": "待準備", "location": "後背包", "note": "依目的地需求"}, {"id": "item_32", "category": "🪪 證件", "name": "台灣名產", "qty": 1, "status": "待準備", "location": "托運行李", "note": "食品須確認入境規定"}, {"id": "item_33", "category": "🪪 證件", "name": "台灣特色小禮", "qty": 2, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_34", "category": "🪪 證件", "name": "名片", "qty": 10, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_35", "category": "💻 3C", "name": "手機", "qty": 1, "status": "待準備", "location": "身上", "note": ""}, {"id": "item_36", "category": "💻 3C", "name": "手機充電器", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_37", "category": "💻 3C", "name": "充電線", "qty": 2, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_38", "category": "💻 3C", "name": "行動電源", "qty": 1, "status": "待準備", "location": "手提行李", "note": "不可任意放入托運，依航空規定"}, {"id": "item_39", "category": "💻 3C", "name": "轉接插頭", "qty": 1, "status": "待準備", "location": "手提行李", "note": "確認目的地插座規格"}, {"id": "item_40", "category": "💻 3C", "name": "延長線", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_41", "category": "💻 3C", "name": "耳機", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_42", "category": "💻 3C", "name": "相機", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_43", "category": "💻 3C", "name": "記憶卡", "qty": 2, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_44", "category": "💻 3C", "name": "備用電池", "qty": 1, "status": "待準備", "location": "手提行李", "note": "依航空規定收納"}, {"id": "item_45", "category": "💻 3C", "name": "平板／電子書閱讀器", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_46", "category": "💻 3C", "name": "筆記型電腦", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_47", "category": "💻 3C", "name": "SIM／eSIM 資料", "qty": 1, "status": "待準備", "location": "身上", "note": "開通方式與漫遊設定"}, {"id": "item_48", "category": "👕 衣物", "name": "上衣", "qty": 5, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_49", "category": "👕 衣物", "name": "下著", "qty": 3, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_50", "category": "👕 衣物", "name": "內衣褲", "qty": 6, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_51", "category": "👕 衣物", "name": "襪子", "qty": 6, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_52", "category": "👕 衣物", "name": "睡衣", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_53", "category": "👕 衣物", "name": "外套", "qty": 1, "status": "待準備", "location": "身上", "note": ""}, {"id": "item_54", "category": "👕 衣物", "name": "保暖衣", "qty": 2, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_55", "category": "👕 衣物", "name": "帽子", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_56", "category": "👕 衣物", "name": "圍巾", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_57", "category": "👕 衣物", "name": "手套", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_58", "category": "👕 衣物", "name": "泳衣", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_59", "category": "👕 衣物", "name": "鞋子", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_60", "category": "👕 衣物", "name": "拖鞋", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_61", "category": "👕 衣物", "name": "洗衣袋", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_62", "category": "🧴 生活用品", "name": "牙刷／牙膏", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_63", "category": "🧴 生活用品", "name": "毛巾", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_64", "category": "🧴 生活用品", "name": "洗面乳", "qty": 1, "status": "待準備", "location": "托運行李", "note": "液體容量依航空規定"}, {"id": "item_65", "category": "🧴 生活用品", "name": "洗髮／沐浴用品", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_66", "category": "🧴 生活用品", "name": "梳子", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_67", "category": "🧴 生活用品", "name": "刮鬍刀", "qty": 1, "status": "待準備", "location": "托運行李", "note": "刀具類請依航空規定"}, {"id": "item_68", "category": "🧴 生活用品", "name": "保養品", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_69", "category": "🧴 生活用品", "name": "化妝品", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_70", "category": "🧴 生活用品", "name": "防曬用品", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_71", "category": "🧴 生活用品", "name": "衛生紙", "qty": 2, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_72", "category": "🧴 生活用品", "name": "濕紙巾", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_73", "category": "🧴 生活用品", "name": "口罩", "qty": 5, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_74", "category": "🧴 生活用品", "name": "雨傘", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_75", "category": "🧴 生活用品", "name": "水壺", "qty": 1, "status": "待準備", "location": "手提行李", "note": "安檢前保持空瓶"}, {"id": "item_76", "category": "🧴 生活用品", "name": "眼鏡／隱形眼鏡", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_77", "category": "🧴 生活用品", "name": "生理用品", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_78", "category": "💊 藥品", "name": "個人常備藥", "qty": 1, "status": "待準備", "location": "手提行李", "note": "保留原包裝與處方資料"}, {"id": "item_79", "category": "💊 藥品", "name": "腸胃藥", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_80", "category": "💊 藥品", "name": "止痛藥", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_81", "category": "💊 藥品", "name": "過敏藥", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_82", "category": "💊 藥品", "name": "暈車藥", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_83", "category": "💊 藥品", "name": "OK 繃／傷口護理", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_84", "category": "💊 藥品", "name": "防蚊液", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_85", "category": "💊 藥品", "name": "藥品處方／英文證明", "qty": 1, "status": "待準備", "location": "手提行李", "note": "特殊藥品依目的地規定"}, {"id": "item_86", "category": "✏️ 其他", "name": "筆", "qty": 2, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_87", "category": "✏️ 其他", "name": "小筆記本", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_88", "category": "✏️ 其他", "name": "零食", "qty": 1, "status": "待準備", "location": "手提行李", "note": "食品請確認入境規定"}, {"id": "item_89", "category": "✏️ 其他", "name": "衣架", "qty": 2, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_90", "category": "✏️ 其他", "name": "夾鏈袋", "qty": 5, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_91", "category": "✏️ 其他", "name": "備用購物袋", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}];
-const CATEGORIES = ["🧳 行李", "🪪 證件", "💻 3C", "👕 衣物", "🧴 生活用品", "💊 藥品", "✏️ 其他"];
-const STORAGE_KEY = "dorayaki_travel_checklist_v1";
-const INFO_KEY = "dorayaki_travel_info_v1";
-let currentFilter = "all";
-let items = loadItems();
-let openCategories = new Set();
+const state = {
+  photos: [],
+  mode: localStorage.getItem("collage_mode") || "join",
+  layout: localStorage.getItem("collage_layout") || "vertical",
+  gap: Number(localStorage.getItem("collage_gap") || 6),
+  radius: Number(localStorage.getItem("collage_radius") || 0),
+  fit: localStorage.getItem("collage_fit") || "cover",
+  ratio: localStorage.getItem("collage_ratio") || "1:1"
+};
+const capacities = {grid2h:2,grid2v:2,grid3top:3,grid3left:3,grid3bottom:3,grid3right:3,grid4:4,grid6v:6,grid6h:6,grid9:9};
+let previewTimer = null;
 
-function cloneDefault() {
-  return JSON.parse(JSON.stringify(DEFAULT_ITEMS));
-}
-function loadItems() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return Array.isArray(saved) ? saved : cloneDefault();
-  } catch(e) {
-    return cloneDefault();
-  }
-}
-function saveItems() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  updateSummary();
-}
-function saveInfo() {
-  const info = {};
-  ["destination","weather","days","companions","outbound","returnFlight","carryOn","checkedBag"].forEach(id => info[id] = document.getElementById(id).value);
-  localStorage.setItem(INFO_KEY, JSON.stringify(info));
-  updateTripSummary();
-}
-function loadInfo() {
-  try {
-    const info = JSON.parse(localStorage.getItem(INFO_KEY) || "{}");
-    Object.entries(info).forEach(([k,v]) => {
-      const el = document.getElementById(k);
-      if(el) el.value = v || "";
-    });
-  } catch(e) {}
-  updateTripSummary();
-}
-function updateTripSummary() {
-  const destination = document.getElementById("destination").value.trim();
-  const days = document.getElementById("days").value.trim();
-  const weather = document.getElementById("weather").value.trim();
-  document.getElementById("tripName").textContent = destination || "尚未設定旅行目的地";
-  document.getElementById("tripSub").textContent =
-    [days, weather].filter(Boolean).join("・") || "點這裡填寫航班、天數與行李額度";
-}
-function toggleTrip() {
-  document.getElementById("tripCard").classList.toggle("open");
-}
-function esc(v) {
-  return String(v ?? "").replace(/[&<>"']/g, s => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[s]));
-}
-function matchesFilter(item) {
-  if(currentFilter === "todo") return item.status === "待準備";
-  if(currentFilter === "buy") return item.status === "待購買";
-  if(currentFilter === "ready") return item.status === "✔ 已準備";
-  return true;
-}
-function render() {
-  const q = (document.getElementById("searchBox").value || "").trim().toLowerCase();
-  const grouped = {};
-  CATEGORIES.forEach(c => grouped[c] = []);
-  items.forEach(item => {
-    const hay = [item.name,item.location,item.note,item.category,item.status].join(" ").toLowerCase();
-    if(matchesFilter(item) && (!q || hay.includes(q))) {
-      if(!grouped[item.category]) grouped[item.category] = [];
-      grouped[item.category].push(item);
+const fileInput = document.getElementById("fileInput");
+const previewCanvas = document.getElementById("previewCanvas");
+
+fileInput.addEventListener("change", async (event) => {
+  const files = Array.from(event.target.files || []);
+  if(!files.length) return;
+  const remaining = Math.max(0, 20 - state.photos.length);
+  const selected = files.slice(0, remaining);
+  if(files.length > remaining) showToast("最多保留 20 張照片");
+
+  for(const file of selected){
+    try{
+      const img = await loadImage(file);
+      state.photos.push({
+        id: "p_" + Date.now() + "_" + Math.random().toString(36).slice(2),
+        file,
+        url: img.url,
+        img: img.image,
+        name: file.name,
+        width: img.image.naturalWidth,
+        height: img.image.naturalHeight
+      });
+    }catch(e){
+      showToast("有照片無法讀取");
     }
-  });
+  }
+  fileInput.value = "";
+  renderPhotos();
+  schedulePreview();
+});
 
-  const root = document.getElementById("list");
+function loadImage(file){
+  return new Promise((resolve,reject)=>{
+    const url = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = ()=>resolve({image,url});
+    image.onerror = ()=>{URL.revokeObjectURL(url);reject(new Error("load failed"))};
+    image.src = url;
+  });
+}
+
+function setMode(mode, button){
+  state.mode=mode;localStorage.setItem("collage_mode",mode);document.querySelectorAll(".mode-tab").forEach(b=>b.classList.remove("active"));if(button)button.classList.add("active");document.getElementById("joinLayouts").classList.toggle("active",mode==="join");document.getElementById("gridLayouts").classList.toggle("active",mode==="grid");const panel=mode==="join"?document.getElementById("joinLayouts"):document.getElementById("gridLayouts");let candidate=panel.querySelector(`.layout[data-layout="${state.layout}"]`);if(!candidate)candidate=panel.querySelector(".layout");setLayout(candidate.dataset.layout,candidate);
+}
+function setLayout(layout, button){
+  state.layout = layout;
+  localStorage.setItem("collage_layout", layout);
+  document.querySelectorAll(".layout").forEach(b=>b.classList.remove("active"));
+  if(button) button.classList.add("active");
+  document.getElementById("ratioWrap").classList.toggle("show", !!capacities[layout]);
+  updateCapacityNote();
+  schedulePreview();
+}
+
+function setFit(fit){
+  state.fit = fit;
+  localStorage.setItem("collage_fit", fit);
+  document.getElementById("fitCover").classList.toggle("active", fit==="cover");
+  document.getElementById("fitContain").classList.toggle("active", fit==="contain");
+  schedulePreview();
+}
+
+function setRatio(ratio, button){
+  state.ratio = ratio;
+  localStorage.setItem("collage_ratio", ratio);
+  document.querySelectorAll(".ratio-btn").forEach(b=>b.classList.remove("active"));
+  if(button) button.classList.add("active");
+  schedulePreview();
+}
+
+document.getElementById("gapRange").addEventListener("input", e=>{
+  state.gap = Number(e.target.value);
+  document.getElementById("gapValue").textContent = state.gap;
+  localStorage.setItem("collage_gap", state.gap);
+  schedulePreview();
+});
+document.getElementById("roundRange").addEventListener("input", e=>{
+  state.radius = Number(e.target.value);
+  document.getElementById("roundValue").textContent = state.radius;
+  localStorage.setItem("collage_radius", state.radius);
+  schedulePreview();
+});
+
+function renderPhotos(){
+  const root = document.getElementById("photoList");
   root.innerHTML = "";
-  let visible = 0;
-
-  Object.entries(grouped).forEach(([category, arr]) => {
-    if(!arr.length) return;
-    visible += arr.length;
-    const allCategoryItems = items.filter(x => x.category === category && x.status !== "✖ 不攜帶");
-    const readyCount = allCategoryItems.filter(x => x.status === "✔ 已準備").length;
-    const section = document.createElement("section");
-    section.className = "category" + (openCategories.has(category) || q ? " open" : "");
-    section.innerHTML = `
-      <button class="cat-head" onclick="toggleCategory('${encodeURIComponent(category)}')">
-        <span class="cat-title">${esc(category)}</span>
-        <span class="cat-count">${readyCount}／${allCategoryItems.length}</span>
-        <span class="cat-chevron">›</span>
-      </button>
-      <div class="cat-body"></div>`;
-    const body = section.querySelector(".cat-body");
-    arr.forEach(item => body.appendChild(itemRow(item)));
-    root.appendChild(section);
+  document.getElementById("photoCount").textContent = state.photos.length ? `共 ${state.photos.length} 張` : "";
+  state.photos.forEach((photo,index)=>{
+    const row = document.createElement("div");
+    row.className = "photo";
+    row.innerHTML = `
+      <img class="thumb" src="${photo.url}" alt="">
+      <div class="photo-info">
+        <div class="photo-name">${escapeHtml(photo.name)}</div>
+        <div class="photo-size">${photo.width} × ${photo.height}</div>
+      </div>
+      <div class="photo-actions">
+        <button onclick="movePhoto(${index},-1)" ${index===0?"disabled":""}>↑</button>
+        <button onclick="movePhoto(${index},1)" ${index===state.photos.length-1?"disabled":""}>↓</button>
+        <button class="delete" style="grid-column:1/-1;width:68px" onclick="removePhoto(${index})">刪除</button>
+      </div>`;
+    root.appendChild(row);
   });
+  document.getElementById("exportBtn").disabled = state.photos.length===0;
+  document.getElementById("topUploadCard").classList.toggle("hidden", state.photos.length>0);
+  updateCapacityNote();
+}
 
-  if(!visible) root.innerHTML = '<div class="empty">目前沒有符合條件的項目</div>';
-  updateSummary();
+function movePhoto(index, direction){
+  const target = index + direction;
+  if(target < 0 || target >= state.photos.length) return;
+  [state.photos[index],state.photos[target]] = [state.photos[target],state.photos[index]];
+  renderPhotos();
+  schedulePreview();
 }
-function itemRow(item) {
-  const el = document.createElement("div");
-  el.className = "item";
-  const iconClass = item.status === "✔ 已準備" ? "ready" :
-                    item.status === "待購買" ? "buy" :
-                    item.status === "✖ 不攜帶" ? "skip" : "";
-  const iconText = item.status === "✔ 已準備" ? "✓" :
-                   item.status === "待購買" ? "🛒" :
-                   item.status === "✖ 不攜帶" ? "—" : "";
-  const meta = [
-    item.status === "待購買" ? "待購買" : "",
-    item.location || "",
-    item.note || ""
-  ].filter(Boolean).join("・");
+function removePhoto(index){
+  const removed = state.photos.splice(index,1)[0];
+  if(removed) URL.revokeObjectURL(removed.url);
+  renderPhotos();
+  schedulePreview();
+}
+function resetAll(){
+  if(state.photos.length && !confirm("確定清空全部照片嗎？")) return;
+  state.photos.forEach(p=>URL.revokeObjectURL(p.url));
+  state.photos = [];
+  renderPhotos();
+  schedulePreview();
+}
 
-  el.innerHTML = `
-    <button class="check ${iconClass}" onclick="quickToggle('${item.id}')" aria-label="快速勾選">${iconText}</button>
-    <div class="item-main" onclick="openEdit('${item.id}')">
-      <div class="item-name">${esc(item.name)}</div>
-      <div class="item-meta">${esc(meta || "點一下編輯詳細資料")}</div>
-    </div>
-    <div class="item-right">
-      <span class="qty">×${Number(item.qty) || 0}</span>
-      <button class="edit-arrow" onclick="openEdit('${item.id}')">›</button>
-    </div>`;
-  return el;
-}
-function toggleCategory(encoded) {
-  const category = decodeURIComponent(encoded);
-  if(openCategories.has(category)) openCategories.delete(category);
-  else openCategories.add(category);
-  render();
-}
-function collapseAll() {
-  openCategories.clear();
-  render();
-}
-function quickToggle(id) {
-  const item = items.find(x => x.id === id);
-  if(!item) return;
-  item.status = item.status === "✔ 已準備" ? "待準備" : "✔ 已準備";
-  saveItems();
-  render();
-}
-function setFilter(filter, btn) {
-  currentFilter = filter;
-  document.querySelectorAll(".filter").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-  openCategories.clear();
-  render();
-}
-function updateSummary() {
-  const active = items.filter(x => x.status !== "✖ 不攜帶");
-  const ready = active.filter(x => x.status === "✔ 已準備").length;
-  const todo = active.filter(x => x.status === "待準備").length;
-  const buy = active.filter(x => x.status === "待購買").length;
-  const percent = active.length ? Math.round(ready / active.length * 100) : 0;
-  document.getElementById("progressBar").style.width = percent + "%";
-  document.getElementById("statReady").textContent = `已完成 ${percent}%`;
-  document.getElementById("statTodo").textContent = `待準備 ${todo}`;
-  document.getElementById("statBuy").textContent = `待購買 ${buy}`;
-}
-function populateCategories(selectId) {
-  const el = document.getElementById(selectId);
-  el.innerHTML = CATEGORIES.map(c => `<option>${c}</option>`).join("");
-}
-function openAdd() {
-  populateCategories("editCategory");
-  document.getElementById("itemModalTitle").textContent = "新增項目";
-  document.getElementById("editId").value = "";
-  document.getElementById("editCategory").value = CATEGORIES[0];
-  document.getElementById("editName").value = "";
-  document.getElementById("editQty").value = 1;
-  document.getElementById("editStatus").value = "待準備";
-  document.getElementById("editLocation").value = "托運行李";
-  document.getElementById("editNote").value = "";
-  document.getElementById("deleteBtn").classList.add("hidden");
-  showSheet("itemModal");
-}
-function openEdit(id) {
-  const item = items.find(x => x.id === id);
-  if(!item) return;
-  populateCategories("editCategory");
-  document.getElementById("itemModalTitle").textContent = "編輯項目";
-  document.getElementById("editId").value = item.id;
-  document.getElementById("editCategory").value = item.category;
-  document.getElementById("editName").value = item.name;
-  document.getElementById("editQty").value = item.qty;
-  document.getElementById("editStatus").value = item.status;
-  document.getElementById("editLocation").value = item.location;
-  document.getElementById("editNote").value = item.note || "";
-  document.getElementById("deleteBtn").classList.remove("hidden");
-  showSheet("itemModal");
-}
-function saveCurrent() {
-  const name = document.getElementById("editName").value.trim();
-  if(!name) { alert("請輸入項目名稱"); return; }
-  const id = document.getElementById("editId").value;
-  const payload = {
-    category: document.getElementById("editCategory").value,
-    name,
-    qty: Number(document.getElementById("editQty").value || 1),
-    status: document.getElementById("editStatus").value,
-    location: document.getElementById("editLocation").value,
-    note: document.getElementById("editNote").value.trim()
-  };
-  if(id) {
-    const item = items.find(x => x.id === id);
-    Object.assign(item, payload);
-  } else {
-    items.push({id:"item_"+Date.now(), ...payload});
-  }
-  saveItems();
-  hideSheet("itemModal");
-  render();
-}
-function deleteCurrent() {
-  const id = document.getElementById("editId").value;
-  if(id && confirm("確定刪除這個項目嗎？")) {
-    items = items.filter(x => x.id !== id);
-    saveItems();
-    hideSheet("itemModal");
-    render();
+function updateCapacityNote(){
+  const note = document.getElementById("capacityNote");
+  const joinCaps={vertical3:3,horizontal3:3,vertical4:4,horizontal4:4};
+  const cap=capacities[state.layout]||joinCaps[state.layout];
+  if(cap && state.photos.length > cap){
+    note.textContent = `此版型最多輸出 ${cap} 張，目前有 ${state.photos.length} 張；只會使用前 ${cap} 張。`;
+    note.classList.add("show");
+  }else{
+    note.classList.remove("show");
   }
 }
-function showSheet(id) {
-  document.getElementById(id).classList.add("show");
-  document.body.style.overflow = "hidden";
+
+function schedulePreview(){
+  clearTimeout(previewTimer);
+  previewTimer = setTimeout(()=>renderPreview(),120);
 }
-function hideSheet(id) {
-  document.getElementById(id).classList.remove("show");
-  document.body.style.overflow = "";
+
+async function renderPreview(){
+  if(!state.photos.length){
+    previewCanvas.classList.add("hidden");
+    document.getElementById("emptyPreview").classList.remove("hidden");
+    return;
+  }
+  document.getElementById("emptyPreview").classList.add("hidden");
+  previewCanvas.classList.remove("hidden");
+  try{
+    await drawCollage(previewCanvas, true);
+  }catch(e){
+    showToast("預覽建立失敗");
+    console.error(e);
+  }
 }
-function closeSheet(e,id) {
-  if(e.target.id === id) hideSheet(id);
+
+function getGridConfig(layout){
+  if(layout==="grid2h")return {cols:2,rows:1,cap:2};if(layout==="grid2v")return {cols:1,rows:2,cap:2};if(layout==="grid4")return {cols:2,rows:2,cap:4};if(layout==="grid6v")return {cols:2,rows:3,cap:6};if(layout==="grid6h")return {cols:3,rows:2,cap:6};if(layout==="grid9")return {cols:3,rows:3,cap:9};return null;
 }
-function toggleMenu() {
-  document.getElementById("menu").classList.toggle("show");
+
+function ratioDimensions(ratio, longSide){
+  if(ratio==="4:5") return {w:longSide, h:Math.round(longSide*1.25)};
+  if(ratio==="9:16") return {w:Math.round(longSide*0.5625), h:longSide};
+  return {w:longSide,h:longSide};
 }
-function closeMenu(e) {
-  if(e.target.id === "menu") document.getElementById("menu").classList.remove("show");
+
+async function drawCollage(canvas, preview){
+  const photos = state.photos.slice();
+  if(!photos.length) return;
+
+  let width, height, placements = [];
+  const gapBase = state.gap;
+  const radiusBase = state.radius;
+
+  if(state.layout==="vertical"){
+    width = preview ? 720 : 1800;
+    const gap = preview ? gapBase*1.5 : gapBase*4;
+    let y = 0;
+    photos.forEach((p,i)=>{
+      const h = Math.max(1, Math.round(width * p.height / p.width));
+      placements.push({photo:p,x:0,y,w:width,h,mode:"contain"});
+      y += h + (i < photos.length-1 ? gap : 0);
+    });
+    height = Math.round(y);
+  }else if(state.layout==="horizontal"){
+    height = preview ? 620 : 1500;
+    const gap = preview ? gapBase*1.5 : gapBase*4;
+    let x = 0;
+    photos.forEach((p,i)=>{
+      const w = Math.max(1, Math.round(height * p.width / p.height));
+      placements.push({photo:p,x,y:0,w,h:height,mode:"contain"});
+      x += w + (i < photos.length-1 ? gap : 0);
+    });
+    width = Math.round(x);
+  }else if(state.layout.startsWith("grid")){
+    const dims=ratioDimensions(state.ratio,preview?760:(state.ratio==="9:16"?3200:2400));width=dims.w;height=dims.h;const gap=preview?gapBase*1.5:gapBase*4;
+    if(["grid3top","grid3left","grid3bottom","grid3right"].includes(state.layout)){
+      const used=photos.slice(0,3),halfW=(width-gap)/2,halfH=(height-gap)/2;
+      const maps={grid3top:[{x:0,y:0,w:width,h:halfH},{x:0,y:halfH+gap,w:halfW,h:halfH},{x:halfW+gap,y:halfH+gap,w:halfW,h:halfH}],grid3bottom:[{x:0,y:0,w:halfW,h:halfH},{x:halfW+gap,y:0,w:halfW,h:halfH},{x:0,y:halfH+gap,w:width,h:halfH}],grid3left:[{x:0,y:0,w:halfW,h:height},{x:halfW+gap,y:0,w:halfW,h:halfH},{x:halfW+gap,y:halfH+gap,w:halfW,h:halfH}],grid3right:[{x:0,y:0,w:halfW,h:halfH},{x:0,y:halfH+gap,w:halfW,h:halfH},{x:halfW+gap,y:0,w:halfW,h:height}]};
+      used.forEach((p,i)=>placements.push({photo:p,...maps[state.layout][i],mode:state.fit}));
+    }else{const cfg=getGridConfig(state.layout),used=photos.slice(0,cfg.cap),cellW=(width-gap*(cfg.cols-1))/cfg.cols,cellH=(height-gap*(cfg.rows-1))/cfg.rows;used.forEach((p,i)=>{const col=i%cfg.cols,row=Math.floor(i/cfg.cols);placements.push({photo:p,x:col*(cellW+gap),y:row*(cellH+gap),w:cellW,h:cellH,mode:state.fit});});}
+  }else if(["vertical3","vertical4"].includes(state.layout)){
+    const limit=state.layout==="vertical3"?3:4,used=photos.slice(0,limit);width=preview?720:1800;const gap=preview?gapBase*1.5:gapBase*4;let y=0;used.forEach((p,i)=>{const h=Math.max(1,Math.round(width*p.height/p.width));placements.push({photo:p,x:0,y,w:width,h,mode:"contain"});y+=h+(i<used.length-1?gap:0);});height=Math.round(y);
+  }else if(["horizontal3","horizontal4"].includes(state.layout)){
+    const limit=state.layout==="horizontal3"?3:4,used=photos.slice(0,limit);height=preview?620:1500;const gap=preview?gapBase*1.5:gapBase*4;let x=0;used.forEach((p,i)=>{const w=Math.max(1,Math.round(height*p.width/p.height));placements.push({photo:p,x,y:0,w,h:height,mode:"contain"});x+=w+(i<used.length-1?gap:0);});width=Math.round(x);
+  }
+
+  const maxCanvasSide = preview ? 1800 : 8192;
+  const scaleDown = Math.min(1, maxCanvasSide/Math.max(width,height));
+  if(scaleDown < 1){
+    width = Math.round(width*scaleDown);
+    height = Math.round(height*scaleDown);
+    placements = placements.map(p=>({
+      ...p,
+      x:p.x*scaleDown,y:p.y*scaleDown,w:p.w*scaleDown,h:p.h*scaleDown
+    }));
+  }
+
+  canvas.width = Math.max(1,Math.round(width));
+  canvas.height = Math.max(1,Math.round(height));
+  const ctx = canvas.getContext("2d",{alpha:false});
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+
+  const radius = (preview ? radiusBase*1.5 : radiusBase*4) * scaleDown;
+  placements.forEach(p=>drawImageInBox(ctx,p.photo.img,p.x,p.y,p.w,p.h,p.mode,radius));
 }
-function exportBackup() {
-  document.getElementById("menu").classList.remove("show");
-  const payload = {
-    version:2,
-    exportedAt:new Date().toISOString(),
-    info:JSON.parse(localStorage.getItem(INFO_KEY) || "{}"),
-    items
-  };
-  const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "出國行李清單_v2_備份.json";
-  a.click();
-  URL.revokeObjectURL(a.href);
+
+function roundedRectPath(ctx,x,y,w,h,r){
+  const radius = Math.max(0,Math.min(r,Math.min(w,h)/2));
+  ctx.beginPath();
+  ctx.moveTo(x+radius,y);
+  ctx.arcTo(x+w,y,x+w,y+h,radius);
+  ctx.arcTo(x+w,y+h,x,y+h,radius);
+  ctx.arcTo(x,y+h,x,y,radius);
+  ctx.arcTo(x,y,x+w,y,radius);
+  ctx.closePath();
 }
-function importBackup(event) {
-  document.getElementById("menu").classList.remove("show");
-  const file = event.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const data = JSON.parse(reader.result);
-      if(!Array.isArray(data.items)) throw new Error();
-      items = data.items;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-      if(data.info) localStorage.setItem(INFO_KEY, JSON.stringify(data.info));
-      loadInfo();
-      render();
-      alert("匯入完成");
-    } catch(e) {
-      alert("備份檔格式不正確");
+
+function drawImageInBox(ctx,img,x,y,w,h,mode,radius){
+  ctx.save();
+  roundedRectPath(ctx,x,y,w,h,radius);
+  ctx.clip();
+
+  if(mode==="contain"){
+    ctx.fillStyle="#fff";
+    ctx.fillRect(x,y,w,h);
+    const scale = Math.min(w/img.naturalWidth,h/img.naturalHeight);
+    const dw = img.naturalWidth*scale;
+    const dh = img.naturalHeight*scale;
+    ctx.drawImage(img,x+(w-dw)/2,y+(h-dh)/2,dw,dh);
+  }else{
+    const scale = Math.max(w/img.naturalWidth,h/img.naturalHeight);
+    const sw = w/scale;
+    const sh = h/scale;
+    const sx = (img.naturalWidth-sw)/2;
+    const sy = (img.naturalHeight-sh)/2;
+    ctx.drawImage(img,sx,sy,sw,sh,x,y,w,h);
+  }
+  ctx.restore();
+}
+
+async function exportJpg(){
+  if(!state.photos.length) return;
+  const btn = document.getElementById("exportBtn");
+  btn.disabled = true;
+  btn.textContent = "處理中…";
+  try{
+    const exportCanvas = document.createElement("canvas");
+    await drawCollage(exportCanvas,false);
+    const blob = await new Promise(resolve=>exportCanvas.toBlob(resolve,"image/jpeg",0.94));
+    if(!blob) throw new Error("blob failed");
+    const filename = "圖片拼接_" + new Date().toISOString().slice(0,10) + ".jpg";
+    const file = new File([blob],filename,{type:"image/jpeg"});
+
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:"圖片拼接"});
+    }else{
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      setTimeout(()=>URL.revokeObjectURL(url),1500);
+      showToast("JPG 已輸出");
     }
-  };
-  reader.readAsText(file);
-  event.target.value = "";
-}
-function resetAll() {
-  document.getElementById("menu").classList.remove("show");
-  if(!confirm("確定恢復原始範本嗎？目前修改會被清除。")) return;
-  items = cloneDefault();
-  localStorage.removeItem(INFO_KEY);
-  ["destination","weather","days","companions","outbound","returnFlight","carryOn","checkedBag"].forEach(id => document.getElementById(id).value = "");
-  saveItems();
-  updateTripSummary();
-  render();
+  }catch(e){
+    if(e && e.name!=="AbortError"){
+      console.error(e);
+      showToast("輸出失敗，請減少照片後再試");
+    }
+  }finally{
+    btn.disabled = state.photos.length===0;
+    btn.textContent = "輸出／分享 JPG";
+  }
 }
 
-function getInfoValue(id) {
-  const el = document.getElementById(id);
-  return el && el.value.trim() ? el.value.trim() : "—";
+function showToast(text){
+  const toast = document.getElementById("toast");
+  toast.textContent = text;
+  toast.classList.add("show");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(()=>toast.classList.remove("show"),1800);
 }
-function printStatusMark(status) {
-  if(status === "✔ 已準備") return "✓";
-  if(status === "待購買") return "購";
-  if(status === "✖ 不攜帶") return "—";
-  return "";
-}
-function buildPrintView() {
-  const activeItems = items.filter(x => x.status !== "✖ 不攜帶");
-  const ready = activeItems.filter(x => x.status === "✔ 已準備").length;
-  const buy = activeItems.filter(x => x.status === "待購買").length;
-  const percent = activeItems.length ? Math.round(ready / activeItems.length * 100) : 0;
-
-  const infoRows = [
-    ["目的地", getInfoValue("destination")],
-    ["天氣", getInfoValue("weather")],
-    ["天數", getInfoValue("days")],
-    ["同行", getInfoValue("companions")],
-    ["去程", getInfoValue("outbound")],
-    ["回程", getInfoValue("returnFlight")],
-    ["隨身行李", getInfoValue("carryOn")],
-    ["托運行李", getInfoValue("checkedBag")]
-  ];
-
-  const categoryHtml = CATEGORIES.map(category => {
-    const rows = items.filter(x => x.category === category);
-    if(!rows.length) return "";
-    const readyCount = rows.filter(x => x.status === "✔ 已準備").length;
-    const carryingCount = rows.filter(x => x.status !== "✖ 不攜帶").length;
-
-    const itemHtml = rows.map(item => {
-      const cls = item.status === "待購買" ? "buy" :
-                  item.status === "✖ 不攜帶" ? "skip" : "";
-      const details = [item.location, item.note].filter(Boolean).join("・");
-      return `
-        <div class="print-item ${cls}">
-          <div class="print-check">${printStatusMark(item.status)}</div>
-          <div>
-            <div class="print-item-name">${esc(item.name)}</div>
-            ${details ? `<div class="print-item-meta">${esc(details)}</div>` : ""}
-          </div>
-          <div class="print-item-qty">×${Number(item.qty) || 0}</div>
-        </div>`;
-    }).join("");
-
-    return `
-      <section class="print-category">
-        <div class="print-category-title">
-          <span>${esc(category)}</span>
-          <span>${readyCount}／${carryingCount}</span>
-        </div>
-        ${itemHtml}
-      </section>`;
-  }).join("");
-
-  document.getElementById("printView").innerHTML = `
-    <div class="print-head">
-      <h1>✈️ 出國行李清單</h1>
-      <div class="print-progress">完成 ${ready}／${activeItems.length}（${percent}%）・待購買 ${buy}</div>
-    </div>
-    <div class="print-info">
-      ${infoRows.map(([label,value]) => `
-        <div class="print-info-item">
-          <span class="print-info-label">${label}：</span>
-          <span class="print-info-value">${esc(value)}</span>
-        </div>`).join("")}
-      <div class="print-alert">提醒：出發前請確認護照效期、簽證、液體、行動電源、食品、藥品及航空公司最新規定。</div>
-    </div>
-    <div class="print-columns">${categoryHtml}</div>
-    <div class="print-foot">列印時間：${new Date().toLocaleString("zh-TW")}</div>`;
-}
-function printChecklist() {
-  document.getElementById("menu").classList.remove("show");
-  buildPrintView();
-  setTimeout(() => window.print(), 80);
+function escapeHtml(value){
+  return String(value??"").replace(/[&<>"']/g,s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[s]));
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadInfo();
-  ["destination","weather","days","companions","outbound","returnFlight","carryOn","checkedBag"].forEach(id => {
-    document.getElementById(id).addEventListener("input", saveInfo);
-  });
-  render();
+document.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("gapRange").value = state.gap;
+  document.getElementById("gapValue").textContent = state.gap;
+  document.getElementById("roundRange").value = state.radius;
+  document.getElementById("roundValue").textContent = state.radius;
+
+  const modeButton=document.querySelector(`.mode-tab[data-mode="${state.mode}"]`)||document.querySelector('.mode-tab[data-mode="join"]');
+  setMode(modeButton.dataset.mode,modeButton);
+  setFit(state.fit);
+
+  document.querySelectorAll(".ratio-btn").forEach(b=>b.classList.toggle("active",b.dataset.ratio===state.ratio));
+  renderPhotos();
 });
 </script>
 </body>
