@@ -92,6 +92,103 @@ main{max-width:720px;margin:auto;padding:11px 11px calc(90px + env(safe-area-ins
   .sheet{max-width:520px;border-radius:20px;padding-bottom:18px}
   .fab{right:calc((100vw - 720px)/2 + 14px)}
 }
+
+.print-view{display:none}
+@media print{
+  @page{size:A4 landscape;margin:7mm}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{background:#fff!important;margin:0!important;padding:0!important}
+  body>*:not(#printView){display:none!important}
+  #printView{
+    display:block!important;
+    color:#111;
+    font-family:"Microsoft JhengHei","PingFang TC",Arial,sans-serif;
+    font-size:8.5pt;
+    line-height:1.25;
+  }
+  .print-head{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    border-bottom:2px solid #263849;
+    padding-bottom:2.5mm;
+    margin-bottom:3mm;
+  }
+  .print-head h1{margin:0;font-size:18pt;letter-spacing:.5pt}
+  .print-head .print-progress{font-size:10pt;font-weight:700}
+  .print-info{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1.5mm 3mm;
+    border:1px solid #aeb8c0;
+    border-radius:2mm;
+    padding:2.5mm 3mm;
+    margin-bottom:3mm;
+  }
+  .print-info-item{display:flex;gap:1.5mm;min-width:0}
+  .print-info-label{font-weight:700;white-space:nowrap}
+  .print-info-value{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .print-alert{
+    grid-column:1/-1;
+    border-top:1px solid #d2d8dd;
+    padding-top:1.5mm;
+    font-size:7.5pt;
+  }
+  .print-columns{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:3mm;
+    align-items:start;
+  }
+  .print-category{
+    border:1px solid #aeb8c0;
+    border-radius:1.8mm;
+    overflow:hidden;
+    break-inside:avoid;
+    page-break-inside:avoid;
+    margin-bottom:3mm;
+  }
+  .print-category-title{
+    background:#dce6ef;
+    border-bottom:1px solid #aeb8c0;
+    padding:1.6mm 2mm;
+    font-weight:800;
+    font-size:9.5pt;
+    display:flex;
+    justify-content:space-between;
+  }
+  .print-item{
+    display:grid;
+    grid-template-columns:5mm 1fr auto;
+    gap:1.5mm;
+    align-items:start;
+    padding:1.15mm 1.8mm;
+    border-top:1px solid #e1e5e8;
+  }
+  .print-item:first-child{border-top:0}
+  .print-check{
+    width:3.8mm;height:3.8mm;
+    border:1px solid #444;
+    display:grid;place-items:center;
+    font-size:8pt;font-weight:800;
+    margin-top:.1mm;
+  }
+  .print-item-name{font-weight:700}
+  .print-item-meta{font-size:7pt;color:#555;margin-top:.4mm}
+  .print-item-qty{white-space:nowrap;font-weight:700}
+  .print-item.buy .print-check{border-color:#9b5a00;color:#9b5a00}
+  .print-item.buy .print-item-name:after{content:" 〔待購〕";font-size:6.8pt;color:#9b5a00}
+  .print-item.skip{color:#8a8a8a;text-decoration:line-through}
+  .print-foot{
+    margin-top:2mm;
+    border-top:1px solid #b9c1c7;
+    padding-top:1.5mm;
+    text-align:right;
+    font-size:7pt;
+    color:#555;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -99,7 +196,7 @@ main{max-width:720px;margin:auto;padding:11px 11px calc(90px + env(safe-area-ins
   <div class="toprow">
     <div>
       <div class="title">✈️ 出國行李清單</div>
-      <div class="subtitle">v2・快速整理模式</div>
+      <div class="subtitle">v2.1・快速整理＋A4列印</div>
     </div>
     <button class="icon-btn" onclick="toggleMenu()">⋯</button>
   </div>
@@ -159,7 +256,7 @@ main{max-width:720px;margin:auto;padding:11px 11px calc(90px + env(safe-area-ins
   <div class="menu-box">
     <button onclick="exportBackup()">匯出備份</button>
     <button onclick="document.getElementById('importFile').click()">匯入備份</button>
-    <button onclick="window.print()">列印</button>
+    <button onclick="printChecklist()">列印</button>
     <button onclick="resetAll()">恢復原始範本</button>
     <input id="importFile" class="hidden" type="file" accept="application/json" onchange="importBackup(event)">
   </div>
@@ -194,6 +291,9 @@ main{max-width:720px;margin:auto;padding:11px 11px calc(90px + env(safe-area-ins
     </div>
   </div>
 </div>
+
+
+<div id="printView" class="print-view" aria-hidden="true"></div>
 
 <script>
 const DEFAULT_ITEMS = [{"id": "item_1", "category": "🧳 行李", "name": "行李箱", "qty": 1, "status": "待準備", "location": "托運行李", "note": "填寫尺寸、顏色或辨識特徵"}, {"id": "item_2", "category": "🧳 行李", "name": "行李袋", "qty": 1, "status": "待準備", "location": "手提行李", "note": "行李箱不夠裝時可使用"}, {"id": "item_3", "category": "🧳 行李", "name": "後背包", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_4", "category": "🧳 行李", "name": "隱形腰包", "qty": 1, "status": "待準備", "location": "身上", "note": "護照、現金等重要物品"}, {"id": "item_5", "category": "🧳 行李", "name": "衣物收納壓縮袋", "qty": 2, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_6", "category": "🧳 行李", "name": "盥洗用品收納包", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_7", "category": "🧳 行李", "name": "化妝包", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_8", "category": "🧳 行李", "name": "環保購物袋", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_9", "category": "🧳 行李", "name": "行李箱束帶", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_10", "category": "🧳 行李", "name": "鎖頭", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_11", "category": "🧳 行李", "name": "行李電子秤", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_12", "category": "🧳 行李", "name": "手機掛繩", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_13", "category": "🧳 行李", "name": "頸枕", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_14", "category": "🧳 行李", "name": "眼罩", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_15", "category": "🪪 證件", "name": "機票／電子機票", "qty": 1, "status": "待準備", "location": "後背包", "note": "建議另存離線版本"}, {"id": "item_16", "category": "🪪 證件", "name": "護照", "qty": 1, "status": "待準備", "location": "身上", "note": "確認效期與空白頁"}, {"id": "item_17", "category": "🪪 證件", "name": "身分證", "qty": 1, "status": "待準備", "location": "身上", "note": ""}, {"id": "item_18", "category": "🪪 證件", "name": "簽證資料", "qty": 1, "status": "待準備", "location": "後背包", "note": "依目的地需求"}, {"id": "item_19", "category": "🪪 證件", "name": "駕照／國際駕照", "qty": 1, "status": "待準備", "location": "後背包", "note": "租車時確認需求"}, {"id": "item_20", "category": "🪪 證件", "name": "行程表", "qty": 1, "status": "待準備", "location": "後背包", "note": "地圖、導覽手冊"}, {"id": "item_21", "category": "🪪 證件", "name": "住宿確認單", "qty": 1, "status": "待準備", "location": "後背包", "note": "保留訂房紀錄"}, {"id": "item_22", "category": "🪪 證件", "name": "交通票券", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_23", "category": "🪪 證件", "name": "景點票券", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_24", "category": "🪪 證件", "name": "2 吋大頭照", "qty": 2, "status": "待準備", "location": "後背包", "note": "備用"}, {"id": "item_25", "category": "🪪 證件", "name": "鑰匙", "qty": 1, "status": "待準備", "location": "身上", "note": "家用、行李箱"}, {"id": "item_26", "category": "🪪 證件", "name": "外幣現金", "qty": 1, "status": "待準備", "location": "身上", "note": ""}, {"id": "item_27", "category": "🪪 證件", "name": "信用卡", "qty": 2, "status": "待準備", "location": "身上", "note": ""}, {"id": "item_28", "category": "🪪 證件", "name": "提款卡", "qty": 1, "status": "待準備", "location": "身上", "note": ""}, {"id": "item_29", "category": "🪪 證件", "name": "緊急聯絡資料", "qty": 1, "status": "待準備", "location": "後背包", "note": "紙本與手機各留一份"}, {"id": "item_30", "category": "🪪 證件", "name": "旅遊保險資料", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_31", "category": "🪪 證件", "name": "健康／疫苗資料", "qty": 1, "status": "待準備", "location": "後背包", "note": "依目的地需求"}, {"id": "item_32", "category": "🪪 證件", "name": "台灣名產", "qty": 1, "status": "待準備", "location": "托運行李", "note": "食品須確認入境規定"}, {"id": "item_33", "category": "🪪 證件", "name": "台灣特色小禮", "qty": 2, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_34", "category": "🪪 證件", "name": "名片", "qty": 10, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_35", "category": "💻 3C", "name": "手機", "qty": 1, "status": "待準備", "location": "身上", "note": ""}, {"id": "item_36", "category": "💻 3C", "name": "手機充電器", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_37", "category": "💻 3C", "name": "充電線", "qty": 2, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_38", "category": "💻 3C", "name": "行動電源", "qty": 1, "status": "待準備", "location": "手提行李", "note": "不可任意放入托運，依航空規定"}, {"id": "item_39", "category": "💻 3C", "name": "轉接插頭", "qty": 1, "status": "待準備", "location": "手提行李", "note": "確認目的地插座規格"}, {"id": "item_40", "category": "💻 3C", "name": "延長線", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_41", "category": "💻 3C", "name": "耳機", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_42", "category": "💻 3C", "name": "相機", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_43", "category": "💻 3C", "name": "記憶卡", "qty": 2, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_44", "category": "💻 3C", "name": "備用電池", "qty": 1, "status": "待準備", "location": "手提行李", "note": "依航空規定收納"}, {"id": "item_45", "category": "💻 3C", "name": "平板／電子書閱讀器", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_46", "category": "💻 3C", "name": "筆記型電腦", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_47", "category": "💻 3C", "name": "SIM／eSIM 資料", "qty": 1, "status": "待準備", "location": "身上", "note": "開通方式與漫遊設定"}, {"id": "item_48", "category": "👕 衣物", "name": "上衣", "qty": 5, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_49", "category": "👕 衣物", "name": "下著", "qty": 3, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_50", "category": "👕 衣物", "name": "內衣褲", "qty": 6, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_51", "category": "👕 衣物", "name": "襪子", "qty": 6, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_52", "category": "👕 衣物", "name": "睡衣", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_53", "category": "👕 衣物", "name": "外套", "qty": 1, "status": "待準備", "location": "身上", "note": ""}, {"id": "item_54", "category": "👕 衣物", "name": "保暖衣", "qty": 2, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_55", "category": "👕 衣物", "name": "帽子", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_56", "category": "👕 衣物", "name": "圍巾", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_57", "category": "👕 衣物", "name": "手套", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_58", "category": "👕 衣物", "name": "泳衣", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_59", "category": "👕 衣物", "name": "鞋子", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_60", "category": "👕 衣物", "name": "拖鞋", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_61", "category": "👕 衣物", "name": "洗衣袋", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_62", "category": "🧴 生活用品", "name": "牙刷／牙膏", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_63", "category": "🧴 生活用品", "name": "毛巾", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_64", "category": "🧴 生活用品", "name": "洗面乳", "qty": 1, "status": "待準備", "location": "托運行李", "note": "液體容量依航空規定"}, {"id": "item_65", "category": "🧴 生活用品", "name": "洗髮／沐浴用品", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_66", "category": "🧴 生活用品", "name": "梳子", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_67", "category": "🧴 生活用品", "name": "刮鬍刀", "qty": 1, "status": "待準備", "location": "托運行李", "note": "刀具類請依航空規定"}, {"id": "item_68", "category": "🧴 生活用品", "name": "保養品", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_69", "category": "🧴 生活用品", "name": "化妝品", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_70", "category": "🧴 生活用品", "name": "防曬用品", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_71", "category": "🧴 生活用品", "name": "衛生紙", "qty": 2, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_72", "category": "🧴 生活用品", "name": "濕紙巾", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_73", "category": "🧴 生活用品", "name": "口罩", "qty": 5, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_74", "category": "🧴 生活用品", "name": "雨傘", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_75", "category": "🧴 生活用品", "name": "水壺", "qty": 1, "status": "待準備", "location": "手提行李", "note": "安檢前保持空瓶"}, {"id": "item_76", "category": "🧴 生活用品", "name": "眼鏡／隱形眼鏡", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_77", "category": "🧴 生活用品", "name": "生理用品", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_78", "category": "💊 藥品", "name": "個人常備藥", "qty": 1, "status": "待準備", "location": "手提行李", "note": "保留原包裝與處方資料"}, {"id": "item_79", "category": "💊 藥品", "name": "腸胃藥", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_80", "category": "💊 藥品", "name": "止痛藥", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_81", "category": "💊 藥品", "name": "過敏藥", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_82", "category": "💊 藥品", "name": "暈車藥", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_83", "category": "💊 藥品", "name": "OK 繃／傷口護理", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_84", "category": "💊 藥品", "name": "防蚊液", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_85", "category": "💊 藥品", "name": "藥品處方／英文證明", "qty": 1, "status": "待準備", "location": "手提行李", "note": "特殊藥品依目的地規定"}, {"id": "item_86", "category": "✏️ 其他", "name": "筆", "qty": 2, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_87", "category": "✏️ 其他", "name": "小筆記本", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_88", "category": "✏️ 其他", "name": "零食", "qty": 1, "status": "待準備", "location": "手提行李", "note": "食品請確認入境規定"}, {"id": "item_89", "category": "✏️ 其他", "name": "衣架", "qty": 2, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_90", "category": "✏️ 其他", "name": "夾鏈袋", "qty": 5, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_91", "category": "✏️ 其他", "name": "備用購物袋", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}];
@@ -482,6 +582,87 @@ function resetAll() {
   updateTripSummary();
   render();
 }
+
+function getInfoValue(id) {
+  const el = document.getElementById(id);
+  return el && el.value.trim() ? el.value.trim() : "—";
+}
+function printStatusMark(status) {
+  if(status === "✔ 已準備") return "✓";
+  if(status === "待購買") return "購";
+  if(status === "✖ 不攜帶") return "—";
+  return "";
+}
+function buildPrintView() {
+  const activeItems = items.filter(x => x.status !== "✖ 不攜帶");
+  const ready = activeItems.filter(x => x.status === "✔ 已準備").length;
+  const buy = activeItems.filter(x => x.status === "待購買").length;
+  const percent = activeItems.length ? Math.round(ready / activeItems.length * 100) : 0;
+
+  const infoRows = [
+    ["目的地", getInfoValue("destination")],
+    ["天氣", getInfoValue("weather")],
+    ["天數", getInfoValue("days")],
+    ["同行", getInfoValue("companions")],
+    ["去程", getInfoValue("outbound")],
+    ["回程", getInfoValue("returnFlight")],
+    ["隨身行李", getInfoValue("carryOn")],
+    ["托運行李", getInfoValue("checkedBag")]
+  ];
+
+  const categoryHtml = CATEGORIES.map(category => {
+    const rows = items.filter(x => x.category === category);
+    if(!rows.length) return "";
+    const readyCount = rows.filter(x => x.status === "✔ 已準備").length;
+    const carryingCount = rows.filter(x => x.status !== "✖ 不攜帶").length;
+
+    const itemHtml = rows.map(item => {
+      const cls = item.status === "待購買" ? "buy" :
+                  item.status === "✖ 不攜帶" ? "skip" : "";
+      const details = [item.location, item.note].filter(Boolean).join("・");
+      return `
+        <div class="print-item ${cls}">
+          <div class="print-check">${printStatusMark(item.status)}</div>
+          <div>
+            <div class="print-item-name">${esc(item.name)}</div>
+            ${details ? `<div class="print-item-meta">${esc(details)}</div>` : ""}
+          </div>
+          <div class="print-item-qty">×${Number(item.qty) || 0}</div>
+        </div>`;
+    }).join("");
+
+    return `
+      <section class="print-category">
+        <div class="print-category-title">
+          <span>${esc(category)}</span>
+          <span>${readyCount}／${carryingCount}</span>
+        </div>
+        ${itemHtml}
+      </section>`;
+  }).join("");
+
+  document.getElementById("printView").innerHTML = `
+    <div class="print-head">
+      <h1>✈️ 出國行李清單</h1>
+      <div class="print-progress">完成 ${ready}／${activeItems.length}（${percent}%）・待購買 ${buy}</div>
+    </div>
+    <div class="print-info">
+      ${infoRows.map(([label,value]) => `
+        <div class="print-info-item">
+          <span class="print-info-label">${label}：</span>
+          <span class="print-info-value">${esc(value)}</span>
+        </div>`).join("")}
+      <div class="print-alert">提醒：出發前請確認護照效期、簽證、液體、行動電源、食品、藥品及航空公司最新規定。</div>
+    </div>
+    <div class="print-columns">${categoryHtml}</div>
+    <div class="print-foot">列印時間：${new Date().toLocaleString("zh-TW")}</div>`;
+}
+function printChecklist() {
+  document.getElementById("menu").classList.remove("show");
+  buildPrintView();
+  setTimeout(() => window.print(), 80);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   loadInfo();
   ["destination","weather","days","companions","outbound","returnFlight","carryOn","checkedBag"].forEach(id => {
