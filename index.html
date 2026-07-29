@@ -3,123 +3,144 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#30465f">
-<title>出國行李清單</title>
+<meta name="theme-color" content="#263849">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>出國行李清單 v2</title>
 <style>
 :root {
-  --bg:#f2f4f7;
-  --card:#ffffff;
-  --navy:#30465f;
-  --navy2:#496781;
-  --blue:#8fb2d7;
-  --line:#dce2e8;
-  --text:#24313d;
-  --muted:#6c7a86;
-  --ok:#dcefdc;
-  --todo:#fff0bf;
-  --buy:#f7d4d4;
-  --skip:#e8e8e8;
+  --bg:#eef1f4; --card:#fff; --navy:#263849; --navy2:#3d566d; --blue:#7e9ebd;
+  --line:#dfe5ea; --text:#23303a; --muted:#73808a; --ready:#3f8d62;
+  --todo:#d39a2c; --buy:#c85f5f; --skip:#8b9197; --shadow:0 7px 24px rgba(30,44,57,.09);
 }
 *{box-sizing:border-box}
+html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif}
 button,input,select,textarea{font:inherit}
-header{position:sticky;top:0;z-index:20;background:linear-gradient(135deg,var(--navy),var(--navy2));color:white;padding:14px 14px 12px;box-shadow:0 4px 18px rgba(29,45,60,.18)}
-.header-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
-h1{font-size:20px;margin:0}
-.small{font-size:12px;opacity:.82}
-.progress{margin-top:10px;background:rgba(255,255,255,.18);height:8px;border-radius:20px;overflow:hidden}
-.progress span{display:block;height:100%;background:#d8ebff;width:0;transition:.2s}
-.summary{display:flex;gap:8px;margin-top:9px;overflow:auto}
-.pill{white-space:nowrap;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:5px 9px;font-size:12px}
-main{max-width:760px;margin:auto;padding:12px 12px 100px}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:12px;overflow:hidden;box-shadow:0 2px 10px rgba(40,55,70,.05)}
-.panel-title{padding:11px 13px;background:var(--blue);color:white;font-weight:700}
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
-.field label{font-size:12px;color:var(--muted);display:block;margin:0 0 5px}
-.field input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff}
-.warning{margin:0 12px 12px;background:#fff4c8;border:1px solid #ebd67c;border-radius:10px;padding:10px;font-size:13px;line-height:1.45}
-.toolbar{display:flex;gap:8px;padding:12px;overflow:auto}
-.btn{border:0;border-radius:10px;padding:9px 12px;background:#e9edf1;color:var(--text);font-weight:600;white-space:nowrap}
-.btn.primary{background:var(--navy);color:#fff}
-.search{width:100%;padding:0 12px 12px}
-.search input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
-.category{margin-bottom:12px}
-.category-head{display:flex;justify-content:space-between;align-items:center;background:var(--navy);color:#fff;padding:11px 13px;border-radius:12px 12px 0 0;font-weight:700;position:sticky;top:118px;z-index:5}
-.category-count{font-size:12px;opacity:.85}
-.items{background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 12px 12px;overflow:hidden}
-.item{padding:12px;border-top:1px solid var(--line)}
+button{-webkit-tap-highlight-color:transparent}
+.top{position:sticky;top:0;z-index:30;background:linear-gradient(145deg,var(--navy),var(--navy2));color:#fff;padding:calc(12px + env(safe-area-inset-top)) 14px 12px;box-shadow:0 5px 18px rgba(21,34,45,.2)}
+.toprow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.title{font-size:20px;font-weight:800}
+.subtitle{font-size:12px;opacity:.78;margin-top:2px}
+.icon-btn{border:0;background:rgba(255,255,255,.13);color:#fff;border-radius:11px;padding:9px 11px}
+.progress-track{height:7px;background:rgba(255,255,255,.18);border-radius:999px;margin-top:11px;overflow:hidden}
+.progress-bar{height:100%;width:0;background:#e8f3ff;border-radius:999px;transition:.25s}
+.stats{display:flex;gap:7px;margin-top:9px;overflow:auto;scrollbar-width:none}
+.stat{white-space:nowrap;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.1);border-radius:999px;padding:5px 9px;font-size:12px}
+main{max-width:720px;margin:auto;padding:11px 11px calc(90px + env(safe-area-inset-bottom))}
+.trip-card,.search-card{background:var(--card);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden}
+.trip-summary{display:flex;align-items:center;gap:10px;padding:12px 13px;cursor:pointer}
+.trip-icon{width:40px;height:40px;border-radius:12px;background:#e7eef5;display:grid;place-items:center;font-size:21px}
+.trip-main{flex:1;min-width:0}
+.trip-name{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trip-sub{font-size:12px;color:var(--muted);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chev{color:#82909b;transition:.2s}
+.trip-card.open .chev{transform:rotate(180deg)}
+.trip-edit{display:none;border-top:1px solid var(--line);padding:12px}
+.trip-card.open .trip-edit{display:block}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.field label{display:block;color:var(--muted);font-size:12px;margin:0 0 5px}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;color:var(--text)}
+.warning{grid-column:1/-1;background:#fff4cf;border:1px solid #ecd788;border-radius:10px;padding:9px 10px;font-size:12px;line-height:1.45}
+.search-card{padding:10px}
+.search-row{display:flex;gap:8px}
+.search-row input{flex:1;min-width:0;border:1px solid var(--line);border-radius:11px;padding:10px 12px}
+.soft-btn{border:0;background:#e9eef2;color:#334553;border-radius:11px;padding:9px 11px;font-weight:700}
+.category{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:9px;overflow:hidden;box-shadow:0 3px 13px rgba(31,45,57,.05)}
+.cat-head{width:100%;border:0;background:#fff;color:var(--text);display:flex;align-items:center;gap:10px;padding:13px;text-align:left}
+.cat-title{font-weight:800;flex:1}
+.cat-count{font-size:12px;color:var(--muted)}
+.cat-chevron{color:#84919c;transition:.2s}
+.category.open .cat-chevron{transform:rotate(90deg)}
+.cat-body{display:none;border-top:1px solid var(--line)}
+.category.open .cat-body{display:block}
+.item{display:grid;grid-template-columns:42px 1fr auto;gap:8px;align-items:center;padding:10px 11px;border-top:1px solid var(--line);min-height:61px}
 .item:first-child{border-top:0}
-.item-top{display:flex;gap:9px;align-items:flex-start}
-.item-name{flex:1;font-weight:700;line-height:1.35}
-.delete{border:0;background:transparent;color:#9a5b5b;font-size:18px;padding:0 3px}
-.row{display:grid;grid-template-columns:90px 1fr;gap:8px;margin-top:9px;align-items:center}
-.row label{font-size:12px;color:var(--muted)}
-.row input,.row select,.row textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:8px;background:white}
-.row textarea{min-height:56px;resize:vertical}
-.status-ready{background:var(--ok)!important}
-.status-todo{background:var(--todo)!important}
-.status-buy{background:var(--buy)!important}
-.status-skip{background:var(--skip)!important}
-.add-wrap{padding:10px 12px 12px}
-.fab{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:30;border:0;border-radius:999px;background:var(--navy);color:white;padding:14px 18px;font-weight:700;box-shadow:0 8px 22px rgba(36,49,61,.28)}
-.modal{position:fixed;inset:0;background:rgba(20,30,40,.45);z-index:50;display:none;align-items:flex-end}
+.check{width:34px;height:34px;border-radius:50%;border:2px solid #bcc6ce;background:#fff;display:grid;place-items:center;font-size:18px;color:#fff}
+.check.ready{background:var(--ready);border-color:var(--ready)}
+.check.buy{background:#fff4f4;border-color:var(--buy);color:var(--buy)}
+.check.skip{background:#eff1f2;border-color:var(--skip);color:var(--skip)}
+.item-main{min-width:0}
+.item-name{font-weight:750;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item-meta{font-size:12px;color:var(--muted);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item-right{display:flex;align-items:center;gap:6px}
+.qty{min-width:27px;text-align:center;background:#edf1f4;border-radius:8px;padding:5px 7px;font-size:12px;font-weight:800}
+.edit-arrow{border:0;background:transparent;color:#87939d;font-size:18px;padding:7px 2px 7px 5px}
+.empty{padding:25px;text-align:center;color:var(--muted)}
+.bottom{position:fixed;left:0;right:0;bottom:0;z-index:35;background:rgba(250,251,252,.96);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 8px calc(8px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.filter{border:0;background:transparent;color:#65737e;border-radius:10px;padding:9px 3px;font-size:12px;font-weight:750}
+.filter.active{background:var(--navy);color:#fff}
+.fab{position:fixed;right:14px;bottom:calc(72px + env(safe-area-inset-bottom));z-index:34;border:0;border-radius:999px;background:var(--navy);color:#fff;padding:13px 17px;font-weight:800;box-shadow:0 9px 23px rgba(27,42,54,.28)}
+.modal{position:fixed;inset:0;background:rgba(17,27,35,.48);z-index:60;display:none;align-items:flex-end}
 .modal.show{display:flex}
-.sheet{width:100%;background:white;border-radius:18px 18px 0 0;padding:16px;max-height:88vh;overflow:auto}
-.sheet h2{font-size:18px;margin:0 0 12px}
+.sheet{width:100%;max-height:90vh;overflow:auto;background:#fff;border-radius:20px 20px 0 0;padding:10px 15px calc(17px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(0,0,0,.12)}
+.grabber{width:42px;height:4px;border-radius:999px;background:#d4d9dd;margin:2px auto 11px}
+.sheet h2{font-size:18px;margin:0 0 13px}
 .sheet .field{margin-bottom:10px}
-.sheet select,.sheet input,.sheet textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff}
-.sheet-actions{display:flex;gap:8px;margin-top:12px}
+.sheet-actions{display:flex;gap:8px;margin-top:13px}
 .sheet-actions button{flex:1}
+.primary{background:var(--navy)!important;color:#fff!important}
+.danger{background:#f6e4e4!important;color:#9d4646!important}
+.menu{position:fixed;inset:0;background:rgba(17,27,35,.35);z-index:55;display:none;align-items:flex-start;justify-content:flex-end;padding:calc(58px + env(safe-area-inset-top)) 12px 0}
+.menu.show{display:flex}
+.menu-box{width:190px;background:#fff;border-radius:13px;padding:6px;box-shadow:var(--shadow)}
+.menu-box button{display:block;width:100%;border:0;background:#fff;text-align:left;padding:11px;border-radius:9px;color:var(--text)}
+.menu-box button:active{background:#eef2f5}
 .hidden{display:none!important}
 @media(min-width:700px){
-  .item{padding:14px}
-  .item-body{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
-  .row.note{grid-column:1/-1}
+  .modal{align-items:center;justify-content:center;padding:20px}
+  .sheet{max-width:520px;border-radius:20px;padding-bottom:18px}
+  .fab{right:calc((100vw - 720px)/2 + 14px)}
 }
 </style>
 </head>
 <body>
-<header>
-  <div class="header-row">
+<header class="top">
+  <div class="toprow">
     <div>
-      <h1>✈️ 出國行李清單</h1>
-      <div class="small">手機版・自動儲存</div>
+      <div class="title">✈️ 出國行李清單</div>
+      <div class="subtitle">v2・快速整理模式</div>
     </div>
-    <button class="btn" onclick="window.print()">列印</button>
+    <button class="icon-btn" onclick="toggleMenu()">⋯</button>
   </div>
-  <div class="progress"><span id="progressBar"></span></div>
-  <div class="summary">
-    <div class="pill" id="sumTotal">總項目 0</div>
-    <div class="pill" id="sumReady">已準備 0</div>
-    <div class="pill" id="sumBuy">待購買 0</div>
+  <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+  <div class="stats">
+    <div class="stat" id="statReady">已完成 0%</div>
+    <div class="stat" id="statTodo">待準備 0</div>
+    <div class="stat" id="statBuy">待購買 0</div>
   </div>
 </header>
 
 <main>
-  <section class="panel">
-    <div class="panel-title">🌍 旅遊基本資訊</div>
-    <div class="info-grid">
-      <div class="field"><label>前往國家／城市</label><input id="destination" placeholder="例如：德國"></div>
-      <div class="field"><label>當地天氣</label><input id="weather" placeholder="例如：20–25°C"></div>
-      <div class="field"><label>出遊天數</label><input id="days" placeholder="例如：6 天 5 夜"></div>
-      <div class="field"><label>同行旅伴</label><input id="companions" placeholder="例如：1 人"></div>
-      <div class="field"><label>去程航班</label><input id="outbound" placeholder="航空／航班／日期"></div>
-      <div class="field"><label>回程航班</label><input id="returnFlight" placeholder="航空／航班／日期"></div>
-      <div class="field"><label>隨身行李</label><input id="carryOn" placeholder="件數／尺寸"></div>
-      <div class="field"><label>托運行李</label><input id="checkedBag" placeholder="件數／重量"></div>
+  <section class="trip-card" id="tripCard">
+    <div class="trip-summary" onclick="toggleTrip()">
+      <div class="trip-icon">🌍</div>
+      <div class="trip-main">
+        <div class="trip-name" id="tripName">尚未設定旅行目的地</div>
+        <div class="trip-sub" id="tripSub">點這裡填寫航班、天數與行李額度</div>
+      </div>
+      <div class="chev">⌄</div>
     </div>
-    <div class="warning">⚠️ 出發前請再次確認護照效期、簽證、航空行李、液體、行動電源、食品與藥品規定。</div>
+    <div class="trip-edit">
+      <div class="grid">
+        <div class="field"><label>前往國家／城市</label><input id="destination" placeholder="例如：日本大阪"></div>
+        <div class="field"><label>當地天氣</label><input id="weather" placeholder="例如：20–25°C"></div>
+        <div class="field"><label>出遊天數</label><input id="days" placeholder="例如：5 天 4 夜"></div>
+        <div class="field"><label>同行旅伴</label><input id="companions" placeholder="例如：2 人"></div>
+        <div class="field"><label>去程航班</label><input id="outbound" placeholder="航空／航班／日期"></div>
+        <div class="field"><label>回程航班</label><input id="returnFlight" placeholder="航空／航班／日期"></div>
+        <div class="field"><label>隨身行李</label><input id="carryOn" placeholder="件數／尺寸"></div>
+        <div class="field"><label>托運行李</label><input id="checkedBag" placeholder="件數／重量"></div>
+        <div class="warning">⚠️ 出發前仍需確認護照效期、簽證、液體、行動電源、食品、藥品及航空公司最新規定。</div>
+      </div>
+    </div>
   </section>
 
-  <section class="panel">
-    <div class="toolbar">
-      <button class="btn primary" onclick="openAdd()">＋ 新增項目</button>
-      <button class="btn" onclick="exportBackup()">備份</button>
-      <button class="btn" onclick="document.getElementById('importFile').click()">匯入</button>
-      <button class="btn" onclick="resetAll()">重設</button>
-      <input id="importFile" class="hidden" type="file" accept="application/json" onchange="importBackup(event)">
+  <section class="search-card">
+    <div class="search-row">
+      <input id="searchBox" placeholder="搜尋物品、位置或備註…" oninput="render()">
+      <button class="soft-btn" onclick="collapseAll()">收合</button>
     </div>
-    <div class="search"><input id="searchBox" placeholder="搜尋物品、備註或位置…" oninput="render()"></div>
   </section>
 
   <div id="list"></div>
@@ -127,26 +148,49 @@ main{max-width:760px;margin:auto;padding:12px 12px 100px}
 
 <button class="fab" onclick="openAdd()">＋ 新增</button>
 
-<div class="modal" id="modal" onclick="closeModal(event)">
+<nav class="bottom">
+  <button class="filter active" data-filter="all" onclick="setFilter('all',this)">全部</button>
+  <button class="filter" data-filter="todo" onclick="setFilter('todo',this)">待準備</button>
+  <button class="filter" data-filter="buy" onclick="setFilter('buy',this)">待購買</button>
+  <button class="filter" data-filter="ready" onclick="setFilter('ready',this)">已完成</button>
+</nav>
+
+<div class="menu" id="menu" onclick="closeMenu(event)">
+  <div class="menu-box">
+    <button onclick="exportBackup()">匯出備份</button>
+    <button onclick="document.getElementById('importFile').click()">匯入備份</button>
+    <button onclick="window.print()">列印</button>
+    <button onclick="resetAll()">恢復原始範本</button>
+    <input id="importFile" class="hidden" type="file" accept="application/json" onchange="importBackup(event)">
+  </div>
+</div>
+
+<div class="modal" id="itemModal" onclick="closeSheet(event,'itemModal')">
   <div class="sheet">
-    <h2>新增行李項目</h2>
-    <div class="field"><label>分類</label><select id="newCategory"></select></div>
-    <div class="field"><label>項目名稱</label><input id="newName" placeholder="例如：暖暖包"></div>
-    <div class="field"><label>數量</label><input id="newQty" type="number" min="0" value="1"></div>
-    <div class="field"><label>狀態</label>
-      <select id="newStatus">
-        <option>待準備</option><option>✔ 已準備</option><option>待購買</option><option>✖ 不攜帶</option>
+    <div class="grabber"></div>
+    <h2 id="itemModalTitle">編輯項目</h2>
+    <input type="hidden" id="editId">
+    <div class="field"><label>分類</label><select id="editCategory"></select></div>
+    <div class="field"><label>項目名稱</label><input id="editName"></div>
+    <div class="grid">
+      <div class="field"><label>數量</label><input id="editQty" type="number" min="0"></div>
+      <div class="field"><label>狀態</label>
+        <select id="editStatus">
+          <option>待準備</option><option>✔ 已準備</option><option>待購買</option><option>✖ 不攜帶</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>放置位置</label>
+      <select id="editLocation">
+        <option>托運行李</option><option>手提行李</option><option>後背包</option>
+        <option>隨身小包</option><option>身上</option><option>未指定</option>
       </select>
     </div>
-    <div class="field"><label>位置</label>
-      <select id="newLocation">
-        <option>托運行李</option><option>手提行李</option><option>後背包</option><option>隨身小包</option><option>身上</option><option>未指定</option>
-      </select>
-    </div>
-    <div class="field"><label>備註</label><textarea id="newNote"></textarea></div>
+    <div class="field"><label>備註</label><textarea id="editNote" rows="3"></textarea></div>
     <div class="sheet-actions">
-      <button class="btn" onclick="hideModal()">取消</button>
-      <button class="btn primary" onclick="addItem()">新增</button>
+      <button class="soft-btn danger" id="deleteBtn" onclick="deleteCurrent()">刪除</button>
+      <button class="soft-btn" onclick="hideSheet('itemModal')">取消</button>
+      <button class="soft-btn primary" onclick="saveCurrent()">儲存</button>
     </div>
   </div>
 </div>
@@ -156,166 +200,293 @@ const DEFAULT_ITEMS = [{"id": "item_1", "category": "🧳 行李", "name": "行�
 const CATEGORIES = ["🧳 行李", "🪪 證件", "💻 3C", "👕 衣物", "🧴 生活用品", "💊 藥品", "✏️ 其他"];
 const STORAGE_KEY = "dorayaki_travel_checklist_v1";
 const INFO_KEY = "dorayaki_travel_info_v1";
+let currentFilter = "all";
 let items = loadItems();
+let openCategories = new Set();
 
-function loadItems(){
+function cloneDefault() {
+  return JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+}
+function loadItems() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return Array.isArray(saved) ? saved : structuredClone(DEFAULT_ITEMS);
+    return Array.isArray(saved) ? saved : cloneDefault();
   } catch(e) {
-    return structuredClone(DEFAULT_ITEMS);
+    return cloneDefault();
   }
 }
-function saveItems(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); updateSummary(); }
-function saveInfo(){
-  const info={};
-  ["destination","weather","days","companions","outbound","returnFlight","carryOn","checkedBag"].forEach(id=>info[id]=document.getElementById(id).value);
-  localStorage.setItem(INFO_KEY, JSON.stringify(info));
-}
-function loadInfo(){
-  try {
-    const info=JSON.parse(localStorage.getItem(INFO_KEY)||"{}");
-    Object.entries(info).forEach(([k,v])=>{const el=document.getElementById(k); if(el) el.value=v||"";});
-  } catch(e) {}
-}
-function statusClass(status){
-  if(status==="✔ 已準備") return "status-ready";
-  if(status==="待購買") return "status-buy";
-  if(status==="✖ 不攜帶") return "status-skip";
-  return "status-todo";
-}
-function esc(v){
-  return String(v??"").replace(/[&<>"']/g,s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[s]));
-}
-function render(){
-  const q=(document.getElementById("searchBox").value||"").trim().toLowerCase();
-  const groups={};
-  CATEGORIES.forEach(c=>groups[c]=[]);
-  items.forEach(item=>{
-    const hay=[item.name,item.note,item.location,item.status,item.category].join(" ").toLowerCase();
-    if(!q || hay.includes(q)){
-      if(!groups[item.category]) groups[item.category]=[];
-      groups[item.category].push(item);
-    }
-  });
-  const root=document.getElementById("list");
-  root.innerHTML="";
-  Object.entries(groups).forEach(([category, arr])=>{
-    if(!arr.length) return;
-    const section=document.createElement("section");
-    section.className="category";
-    section.innerHTML=`<div class="category-head"><span>${esc(category)}</span><span class="category-count">${arr.length} 項</span></div><div class="items"></div>`;
-    const box=section.querySelector(".items");
-    arr.forEach(item=>box.appendChild(itemCard(item)));
-    root.appendChild(section);
-  });
+function saveItems() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   updateSummary();
 }
-function itemCard(item){
-  const el=document.createElement("div");
-  el.className="item";
-  el.innerHTML=`
-    <div class="item-top">
+function saveInfo() {
+  const info = {};
+  ["destination","weather","days","companions","outbound","returnFlight","carryOn","checkedBag"].forEach(id => info[id] = document.getElementById(id).value);
+  localStorage.setItem(INFO_KEY, JSON.stringify(info));
+  updateTripSummary();
+}
+function loadInfo() {
+  try {
+    const info = JSON.parse(localStorage.getItem(INFO_KEY) || "{}");
+    Object.entries(info).forEach(([k,v]) => {
+      const el = document.getElementById(k);
+      if(el) el.value = v || "";
+    });
+  } catch(e) {}
+  updateTripSummary();
+}
+function updateTripSummary() {
+  const destination = document.getElementById("destination").value.trim();
+  const days = document.getElementById("days").value.trim();
+  const weather = document.getElementById("weather").value.trim();
+  document.getElementById("tripName").textContent = destination || "尚未設定旅行目的地";
+  document.getElementById("tripSub").textContent =
+    [days, weather].filter(Boolean).join("・") || "點這裡填寫航班、天數與行李額度";
+}
+function toggleTrip() {
+  document.getElementById("tripCard").classList.toggle("open");
+}
+function esc(v) {
+  return String(v ?? "").replace(/[&<>"']/g, s => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[s]));
+}
+function matchesFilter(item) {
+  if(currentFilter === "todo") return item.status === "待準備";
+  if(currentFilter === "buy") return item.status === "待購買";
+  if(currentFilter === "ready") return item.status === "✔ 已準備";
+  return true;
+}
+function render() {
+  const q = (document.getElementById("searchBox").value || "").trim().toLowerCase();
+  const grouped = {};
+  CATEGORIES.forEach(c => grouped[c] = []);
+  items.forEach(item => {
+    const hay = [item.name,item.location,item.note,item.category,item.status].join(" ").toLowerCase();
+    if(matchesFilter(item) && (!q || hay.includes(q))) {
+      if(!grouped[item.category]) grouped[item.category] = [];
+      grouped[item.category].push(item);
+    }
+  });
+
+  const root = document.getElementById("list");
+  root.innerHTML = "";
+  let visible = 0;
+
+  Object.entries(grouped).forEach(([category, arr]) => {
+    if(!arr.length) return;
+    visible += arr.length;
+    const allCategoryItems = items.filter(x => x.category === category && x.status !== "✖ 不攜帶");
+    const readyCount = allCategoryItems.filter(x => x.status === "✔ 已準備").length;
+    const section = document.createElement("section");
+    section.className = "category" + (openCategories.has(category) || q ? " open" : "");
+    section.innerHTML = `
+      <button class="cat-head" onclick="toggleCategory('${encodeURIComponent(category)}')">
+        <span class="cat-title">${esc(category)}</span>
+        <span class="cat-count">${readyCount}／${allCategoryItems.length}</span>
+        <span class="cat-chevron">›</span>
+      </button>
+      <div class="cat-body"></div>`;
+    const body = section.querySelector(".cat-body");
+    arr.forEach(item => body.appendChild(itemRow(item)));
+    root.appendChild(section);
+  });
+
+  if(!visible) root.innerHTML = '<div class="empty">目前沒有符合條件的項目</div>';
+  updateSummary();
+}
+function itemRow(item) {
+  const el = document.createElement("div");
+  el.className = "item";
+  const iconClass = item.status === "✔ 已準備" ? "ready" :
+                    item.status === "待購買" ? "buy" :
+                    item.status === "✖ 不攜帶" ? "skip" : "";
+  const iconText = item.status === "✔ 已準備" ? "✓" :
+                   item.status === "待購買" ? "🛒" :
+                   item.status === "✖ 不攜帶" ? "—" : "";
+  const meta = [
+    item.status === "待購買" ? "待購買" : "",
+    item.location || "",
+    item.note || ""
+  ].filter(Boolean).join("・");
+
+  el.innerHTML = `
+    <button class="check ${iconClass}" onclick="quickToggle('${item.id}')" aria-label="快速勾選">${iconText}</button>
+    <div class="item-main" onclick="openEdit('${item.id}')">
       <div class="item-name">${esc(item.name)}</div>
-      <button class="delete" aria-label="刪除" onclick="removeItem('${item.id}')">×</button>
+      <div class="item-meta">${esc(meta || "點一下編輯詳細資料")}</div>
     </div>
-    <div class="item-body">
-      <div class="row"><label>數量</label><input type="number" min="0" value="${esc(item.qty)}" onchange="updateItem('${item.id}','qty',Number(this.value))"></div>
-      <div class="row"><label>狀態</label>
-        <select class="${statusClass(item.status)}" onchange="this.className=statusClass(this.value);updateItem('${item.id}','status',this.value)">
-          ${["待準備","✔ 已準備","待購買","✖ 不攜帶"].map(v=>`<option ${v===item.status?"selected":""}>${v}</option>`).join("")}
-        </select>
-      </div>
-      <div class="row"><label>位置</label>
-        <select onchange="updateItem('${item.id}','location',this.value)">
-          ${["托運行李","手提行李","後背包","隨身小包","身上","未指定"].map(v=>`<option ${v===item.location?"selected":""}>${v}</option>`).join("")}
-        </select>
-      </div>
-      <div class="row note"><label>備註</label><textarea onchange="updateItem('${item.id}','note',this.value)">${esc(item.note)}</textarea></div>
+    <div class="item-right">
+      <span class="qty">×${Number(item.qty) || 0}</span>
+      <button class="edit-arrow" onclick="openEdit('${item.id}')">›</button>
     </div>`;
   return el;
 }
-function updateItem(id,key,value){
-  const item=items.find(x=>x.id===id);
-  if(item){item[key]=value;saveItems();}
+function toggleCategory(encoded) {
+  const category = decodeURIComponent(encoded);
+  if(openCategories.has(category)) openCategories.delete(category);
+  else openCategories.add(category);
+  render();
 }
-function removeItem(id){
-  if(confirm("確定刪除這個項目嗎？")){items=items.filter(x=>x.id!==id);saveItems();render();}
+function collapseAll() {
+  openCategories.clear();
+  render();
 }
-function updateSummary(){
-  const total=items.filter(x=>x.status!=="✖ 不攜帶").length;
-  const ready=items.filter(x=>x.status==="✔ 已準備").length;
-  const buy=items.filter(x=>x.status==="待購買").length;
-  document.getElementById("sumTotal").textContent=`總項目 ${total}`;
-  document.getElementById("sumReady").textContent=`已準備 ${ready}`;
-  document.getElementById("sumBuy").textContent=`待購買 ${buy}`;
-  document.getElementById("progressBar").style.width=(total?Math.round(ready/total*100):0)+"%";
+function quickToggle(id) {
+  const item = items.find(x => x.id === id);
+  if(!item) return;
+  item.status = item.status === "✔ 已準備" ? "待準備" : "✔ 已準備";
+  saveItems();
+  render();
 }
-function openAdd(){
-  document.getElementById("newCategory").innerHTML=CATEGORIES.map(c=>`<option>${c}</option>`).join("");
-  document.getElementById("newName").value="";
-  document.getElementById("newQty").value=1;
-  document.getElementById("newStatus").value="待準備";
-  document.getElementById("newLocation").value="托運行李";
-  document.getElementById("newNote").value="";
-  document.getElementById("modal").classList.add("show");
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll(".filter").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  openCategories.clear();
+  render();
 }
-function hideModal(){document.getElementById("modal").classList.remove("show");}
-function closeModal(e){if(e.target.id==="modal") hideModal();}
-function addItem(){
-  const name=document.getElementById("newName").value.trim();
-  if(!name){alert("請輸入項目名稱");return;}
-  items.push({
-    id:"item_"+Date.now(),
-    category:document.getElementById("newCategory").value,
+function updateSummary() {
+  const active = items.filter(x => x.status !== "✖ 不攜帶");
+  const ready = active.filter(x => x.status === "✔ 已準備").length;
+  const todo = active.filter(x => x.status === "待準備").length;
+  const buy = active.filter(x => x.status === "待購買").length;
+  const percent = active.length ? Math.round(ready / active.length * 100) : 0;
+  document.getElementById("progressBar").style.width = percent + "%";
+  document.getElementById("statReady").textContent = `已完成 ${percent}%`;
+  document.getElementById("statTodo").textContent = `待準備 ${todo}`;
+  document.getElementById("statBuy").textContent = `待購買 ${buy}`;
+}
+function populateCategories(selectId) {
+  const el = document.getElementById(selectId);
+  el.innerHTML = CATEGORIES.map(c => `<option>${c}</option>`).join("");
+}
+function openAdd() {
+  populateCategories("editCategory");
+  document.getElementById("itemModalTitle").textContent = "新增項目";
+  document.getElementById("editId").value = "";
+  document.getElementById("editCategory").value = CATEGORIES[0];
+  document.getElementById("editName").value = "";
+  document.getElementById("editQty").value = 1;
+  document.getElementById("editStatus").value = "待準備";
+  document.getElementById("editLocation").value = "托運行李";
+  document.getElementById("editNote").value = "";
+  document.getElementById("deleteBtn").classList.add("hidden");
+  showSheet("itemModal");
+}
+function openEdit(id) {
+  const item = items.find(x => x.id === id);
+  if(!item) return;
+  populateCategories("editCategory");
+  document.getElementById("itemModalTitle").textContent = "編輯項目";
+  document.getElementById("editId").value = item.id;
+  document.getElementById("editCategory").value = item.category;
+  document.getElementById("editName").value = item.name;
+  document.getElementById("editQty").value = item.qty;
+  document.getElementById("editStatus").value = item.status;
+  document.getElementById("editLocation").value = item.location;
+  document.getElementById("editNote").value = item.note || "";
+  document.getElementById("deleteBtn").classList.remove("hidden");
+  showSheet("itemModal");
+}
+function saveCurrent() {
+  const name = document.getElementById("editName").value.trim();
+  if(!name) { alert("請輸入項目名稱"); return; }
+  const id = document.getElementById("editId").value;
+  const payload = {
+    category: document.getElementById("editCategory").value,
     name,
-    qty:Number(document.getElementById("newQty").value||1),
-    status:document.getElementById("newStatus").value,
-    location:document.getElementById("newLocation").value,
-    note:document.getElementById("newNote").value.trim()
-  });
-  saveItems();hideModal();render();
+    qty: Number(document.getElementById("editQty").value || 1),
+    status: document.getElementById("editStatus").value,
+    location: document.getElementById("editLocation").value,
+    note: document.getElementById("editNote").value.trim()
+  };
+  if(id) {
+    const item = items.find(x => x.id === id);
+    Object.assign(item, payload);
+  } else {
+    items.push({id:"item_"+Date.now(), ...payload});
+  }
+  saveItems();
+  hideSheet("itemModal");
+  render();
 }
-function exportBackup(){
-  const payload={
-    version:1,
+function deleteCurrent() {
+  const id = document.getElementById("editId").value;
+  if(id && confirm("確定刪除這個項目嗎？")) {
+    items = items.filter(x => x.id !== id);
+    saveItems();
+    hideSheet("itemModal");
+    render();
+  }
+}
+function showSheet(id) {
+  document.getElementById(id).classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+function hideSheet(id) {
+  document.getElementById(id).classList.remove("show");
+  document.body.style.overflow = "";
+}
+function closeSheet(e,id) {
+  if(e.target.id === id) hideSheet(id);
+}
+function toggleMenu() {
+  document.getElementById("menu").classList.toggle("show");
+}
+function closeMenu(e) {
+  if(e.target.id === "menu") document.getElementById("menu").classList.remove("show");
+}
+function exportBackup() {
+  document.getElementById("menu").classList.remove("show");
+  const payload = {
+    version:2,
     exportedAt:new Date().toISOString(),
-    info:JSON.parse(localStorage.getItem(INFO_KEY)||"{}"),
+    info:JSON.parse(localStorage.getItem(INFO_KEY) || "{}"),
     items
   };
-  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="出國行李清單備份.json";
+  const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "出國行李清單_v2_備份.json";
   a.click();
   URL.revokeObjectURL(a.href);
 }
-function importBackup(event){
-  const file=event.target.files[0]; if(!file)return;
-  const reader=new FileReader();
-  reader.onload=()=>{
-    try{
-      const data=JSON.parse(reader.result);
+function importBackup(event) {
+  document.getElementById("menu").classList.remove("show");
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
       if(!Array.isArray(data.items)) throw new Error();
-      items=data.items;
-      localStorage.setItem(STORAGE_KEY,JSON.stringify(items));
-      if(data.info) localStorage.setItem(INFO_KEY,JSON.stringify(data.info));
-      loadInfo();render();alert("匯入完成");
-    }catch(e){alert("備份檔格式不正確");}
+      items = data.items;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      if(data.info) localStorage.setItem(INFO_KEY, JSON.stringify(data.info));
+      loadInfo();
+      render();
+      alert("匯入完成");
+    } catch(e) {
+      alert("備份檔格式不正確");
+    }
   };
   reader.readAsText(file);
-  event.target.value="";
+  event.target.value = "";
 }
-function resetAll(){
-  if(!confirm("確定恢復成原始範本嗎？目前修改會被清除。")) return;
-  items=structuredClone(DEFAULT_ITEMS);
+function resetAll() {
+  document.getElementById("menu").classList.remove("show");
+  if(!confirm("確定恢復原始範本嗎？目前修改會被清除。")) return;
+  items = cloneDefault();
   localStorage.removeItem(INFO_KEY);
-  ["destination","weather","days","companions","outbound","returnFlight","carryOn","checkedBag"].forEach(id=>document.getElementById(id).value="");
-  saveItems();render();
+  ["destination","weather","days","companions","outbound","returnFlight","carryOn","checkedBag"].forEach(id => document.getElementById(id).value = "");
+  saveItems();
+  updateTripSummary();
+  render();
 }
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded", () => {
   loadInfo();
-  ["destination","weather","days","companions","outbound","returnFlight","carryOn","checkedBag"].forEach(id=>document.getElementById(id).addEventListener("input",saveInfo));
+  ["destination","weather","days","companions","outbound","returnFlight","carryOn","checkedBag"].forEach(id => {
+    document.getElementById(id).addEventListener("input", saveInfo);
+  });
   render();
 });
 </script>
