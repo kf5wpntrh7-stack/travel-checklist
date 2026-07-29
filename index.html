@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#263849">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>出國行李清單 v2</title>
+<title>出國行李清單 v2.2</title>
 <style>
 :root {
   --bg:#eef1f4; --card:#fff; --navy:#263849; --navy2:#3d566d; --blue:#7e9ebd;
@@ -39,6 +39,25 @@ main{max-width:720px;margin:auto;padding:11px 11px calc(90px + env(safe-area-ins
 .trip-edit{display:none;border-top:1px solid var(--line);padding:12px}
 .trip-card.open .trip-edit{display:block}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.main-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.main-fields .destination-field{grid-column:1/-1}
+.more-toggle{
+  width:100%;border:0;background:#edf2f5;color:#40515e;border-radius:10px;
+  padding:10px 11px;margin-top:10px;font-weight:750;text-align:left;
+  display:flex;align-items:center;justify-content:space-between
+}
+.more-toggle .arrow{transition:.2s}
+.more-toggle.open .arrow{transform:rotate(180deg)}
+.more-fields{display:none;margin-top:9px}
+.more-fields.open{display:grid}
+.auto-days{
+  grid-column:1/-1;background:#eef5fa;border:1px solid #d6e3ec;border-radius:10px;
+  padding:9px 10px;font-size:12px;color:#516574
+}
+@media(max-width:430px){
+  .main-fields,.grid{grid-template-columns:1fr}
+  .main-fields .destination-field,.warning,.auto-days{grid-column:1}
+}
 .field label{display:block;color:var(--muted);font-size:12px;margin:0 0 5px}
 .field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;color:var(--text)}
 .warning{grid-column:1/-1;background:#fff4cf;border:1px solid #ecd788;border-radius:10px;padding:9px 10px;font-size:12px;line-height:1.45}
@@ -196,7 +215,7 @@ main{max-width:720px;margin:auto;padding:11px 11px calc(90px + env(safe-area-ins
   <div class="toprow">
     <div>
       <div class="title">✈️ 出國行李清單</div>
-      <div class="subtitle">v2.1・快速整理＋A4列印</div>
+      <div class="subtitle">v2.2・簡化旅行資訊＋A4列印</div>
     </div>
     <button class="icon-btn" onclick="toggleMenu()">⋯</button>
   </div>
@@ -214,20 +233,41 @@ main{max-width:720px;margin:auto;padding:11px 11px calc(90px + env(safe-area-ins
       <div class="trip-icon">🌍</div>
       <div class="trip-main">
         <div class="trip-name" id="tripName">尚未設定旅行目的地</div>
-        <div class="trip-sub" id="tripSub">點這裡填寫航班、天數與行李額度</div>
+        <div class="trip-sub" id="tripSub">點這裡設定目的地與旅行日期</div>
       </div>
       <div class="chev">⌄</div>
     </div>
     <div class="trip-edit">
-      <div class="grid">
-        <div class="field"><label>前往國家／城市</label><input id="destination" placeholder="例如：日本大阪"></div>
+      <div class="main-fields">
+        <div class="field destination-field">
+          <label>目的地</label>
+          <input id="destination" placeholder="例如：日本大阪">
+        </div>
+        <div class="field">
+          <label>出發日期</label>
+          <input id="departureDate" type="date">
+        </div>
+        <div class="field">
+          <label>回程日期</label>
+          <input id="returnDate" type="date">
+        </div>
+        <div class="field">
+          <label>同行人數</label>
+          <input id="companions" type="number" min="1" inputmode="numeric" placeholder="例如：2">
+        </div>
+        <div class="auto-days" id="autoDays">填入出發與回程日期後，會自動計算旅遊天數。</div>
+      </div>
+
+      <button id="moreToggle" class="more-toggle" onclick="toggleMoreInfo()">
+        <span>更多資訊（選填）</span><span class="arrow">⌄</span>
+      </button>
+
+      <div id="moreFields" class="grid more-fields">
         <div class="field"><label>當地天氣</label><input id="weather" placeholder="例如：20–25°C"></div>
-        <div class="field"><label>出遊天數</label><input id="days" placeholder="例如：5 天 4 夜"></div>
-        <div class="field"><label>同行旅伴</label><input id="companions" placeholder="例如：2 人"></div>
-        <div class="field"><label>去程航班</label><input id="outbound" placeholder="航空／航班／日期"></div>
-        <div class="field"><label>回程航班</label><input id="returnFlight" placeholder="航空／航班／日期"></div>
-        <div class="field"><label>隨身行李</label><input id="carryOn" placeholder="件數／尺寸"></div>
-        <div class="field"><label>托運行李</label><input id="checkedBag" placeholder="件數／重量"></div>
+        <div class="field"><label>去程航班</label><input id="outbound" placeholder="航空／航班"></div>
+        <div class="field"><label>回程航班</label><input id="returnFlight" placeholder="航空／航班"></div>
+        <div class="field"><label>隨身行李</label><input id="carryOn" placeholder="例如：1 件／7 kg"></div>
+        <div class="field"><label>托運行李</label><input id="checkedBag" placeholder="例如：1 件／23 kg"></div>
         <div class="warning">⚠️ 出發前仍需確認護照效期、簽證、液體、行動電源、食品、藥品及航空公司最新規定。</div>
       </div>
     </div>
@@ -319,15 +359,30 @@ function saveItems() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   updateSummary();
 }
+function getTripDaysText() {
+  const start = document.getElementById("departureDate").value;
+  const end = document.getElementById("returnDate").value;
+  if(!start || !end) return "";
+  const startDate = new Date(start + "T00:00:00");
+  const endDate = new Date(end + "T00:00:00");
+  const diff = Math.round((endDate - startDate) / 86400000);
+  if(diff < 0) return "回程日期不可早於出發日期";
+  return `${diff + 1} 天 ${diff} 夜`;
+}
 function saveInfo() {
   const info = {};
-  ["destination","weather","days","companions","outbound","returnFlight","carryOn","checkedBag"].forEach(id => info[id] = document.getElementById(id).value);
+  ["destination","departureDate","returnDate","companions","weather","outbound","returnFlight","carryOn","checkedBag"].forEach(id => {
+    const el = document.getElementById(id);
+    info[id] = el ? el.value : "";
+  });
+  info.days = getTripDaysText();
   localStorage.setItem(INFO_KEY, JSON.stringify(info));
   updateTripSummary();
 }
 function loadInfo() {
   try {
     const info = JSON.parse(localStorage.getItem(INFO_KEY) || "{}");
+    // 舊版的「天數」仍保留於備份中，但新版改由日期自動計算。
     Object.entries(info).forEach(([k,v]) => {
       const el = document.getElementById(k);
       if(el) el.value = v || "";
@@ -335,16 +390,47 @@ function loadInfo() {
   } catch(e) {}
   updateTripSummary();
 }
+function formatDateRange() {
+  const start = document.getElementById("departureDate").value;
+  const end = document.getElementById("returnDate").value;
+  if(!start && !end) return "";
+  const fmt = value => {
+    if(!value) return "";
+    const [y,m,d] = value.split("-");
+    return `${Number(m)}/${Number(d)}`;
+  };
+  if(start && end) return `${fmt(start)}～${fmt(end)}`;
+  return start ? `${fmt(start)} 出發` : `${fmt(end)} 回程`;
+}
 function updateTripSummary() {
   const destination = document.getElementById("destination").value.trim();
-  const days = document.getElementById("days").value.trim();
-  const weather = document.getElementById("weather").value.trim();
+  const companionsRaw = document.getElementById("companions").value.trim();
+  const daysText = getTripDaysText();
+  const dateRange = formatDateRange();
+  const autoDays = document.getElementById("autoDays");
+
   document.getElementById("tripName").textContent = destination || "尚未設定旅行目的地";
+
+  const parts = [];
+  if(dateRange) parts.push(dateRange);
+  if(daysText && !daysText.includes("不可")) parts.push(daysText);
+  if(companionsRaw) parts.push(`${companionsRaw} 人`);
+
   document.getElementById("tripSub").textContent =
-    [days, weather].filter(Boolean).join("・") || "點這裡填寫航班、天數與行李額度";
+    parts.join("｜") || "點這裡設定目的地與旅行日期";
+
+  if(daysText) {
+    autoDays.textContent = daysText.includes("不可") ? `⚠️ ${daysText}` : `自動計算：${daysText}`;
+  } else {
+    autoDays.textContent = "填入出發與回程日期後，會自動計算旅遊天數。";
+  }
 }
 function toggleTrip() {
   document.getElementById("tripCard").classList.toggle("open");
+}
+function toggleMoreInfo() {
+  document.getElementById("moreFields").classList.toggle("open");
+  document.getElementById("moreToggle").classList.toggle("open");
 }
 function esc(v) {
   return String(v ?? "").replace(/[&<>"']/g, s => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[s]));
@@ -577,7 +663,7 @@ function resetAll() {
   if(!confirm("確定恢復原始範本嗎？目前修改會被清除。")) return;
   items = cloneDefault();
   localStorage.removeItem(INFO_KEY);
-  ["destination","weather","days","companions","outbound","returnFlight","carryOn","checkedBag"].forEach(id => document.getElementById(id).value = "");
+  ["destination","departureDate","returnDate","companions","weather","outbound","returnFlight","carryOn","checkedBag"].forEach(id => { const el=document.getElementById(id); if(el) el.value=""; });
   saveItems();
   updateTripSummary();
   render();
@@ -601,9 +687,11 @@ function buildPrintView() {
 
   const infoRows = [
     ["目的地", getInfoValue("destination")],
+    ["出發日期", getInfoValue("departureDate")],
+    ["回程日期", getInfoValue("returnDate")],
+    ["天數", getTripDaysText() || "—"],
+    ["同行", getInfoValue("companions") === "—" ? "—" : getInfoValue("companions") + " 人"],
     ["天氣", getInfoValue("weather")],
-    ["天數", getInfoValue("days")],
-    ["同行", getInfoValue("companions")],
     ["去程", getInfoValue("outbound")],
     ["回程", getInfoValue("returnFlight")],
     ["隨身行李", getInfoValue("carryOn")],
@@ -665,8 +753,9 @@ function printChecklist() {
 
 document.addEventListener("DOMContentLoaded", () => {
   loadInfo();
-  ["destination","weather","days","companions","outbound","returnFlight","carryOn","checkedBag"].forEach(id => {
-    document.getElementById(id).addEventListener("input", saveInfo);
+  ["destination","departureDate","returnDate","companions","weather","outbound","returnFlight","carryOn","checkedBag"].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.addEventListener("input", saveInfo);
   });
   render();
 });
