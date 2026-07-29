@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#263849">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>出國行李清單 v2.2</title>
+<title>出國行李清單 v2.3</title>
 <style>
 :root {
   --bg:#eef1f4; --card:#fff; --navy:#263849; --navy2:#3d566d; --blue:#7e9ebd;
@@ -86,7 +86,7 @@ main{max-width:720px;margin:auto;padding:11px 11px calc(90px + env(safe-area-ins
 .qty{min-width:27px;text-align:center;background:#edf1f4;border-radius:8px;padding:5px 7px;font-size:12px;font-weight:800}
 .edit-arrow{border:0;background:transparent;color:#87939d;font-size:18px;padding:7px 2px 7px 5px}
 .empty{padding:25px;text-align:center;color:var(--muted)}
-.bottom{position:fixed;left:0;right:0;bottom:0;z-index:35;background:rgba(250,251,252,.96);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 8px calc(8px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.bottom{position:fixed;left:0;right:0;bottom:0;z-index:35;background:rgba(250,251,252,.96);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 8px calc(8px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
 .filter{border:0;background:transparent;color:#65737e;border-radius:10px;padding:9px 3px;font-size:12px;font-weight:750}
 .filter.active{background:var(--navy);color:#fff}
 .fab{position:fixed;right:14px;bottom:calc(72px + env(safe-area-inset-bottom));z-index:34;border:0;border-radius:999px;background:var(--navy);color:#fff;padding:13px 17px;font-weight:800;box-shadow:0 9px 23px rgba(27,42,54,.28)}
@@ -144,9 +144,23 @@ main{max-width:720px;margin:auto;padding:11px 11px calc(90px + env(safe-area-ins
     padding:2.5mm 3mm;
     margin-bottom:3mm;
   }
-  .print-info-item{display:flex;gap:1.5mm;min-width:0}
+  .print-info-item{
+    display:grid;
+    grid-template-columns:auto minmax(0,1fr);
+    gap:1.5mm;
+    min-width:0;
+    align-items:start;
+  }
   .print-info-label{font-weight:700;white-space:nowrap}
-  .print-info-value{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .print-info-value{
+    min-width:0;
+    white-space:normal;
+    overflow:visible;
+    text-overflow:clip;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+    line-height:1.3;
+  }
   .print-alert{
     grid-column:1/-1;
     border-top:1px solid #d2d8dd;
@@ -154,6 +168,7 @@ main{max-width:720px;margin:auto;padding:11px 11px calc(90px + env(safe-area-ins
     font-size:7.5pt;
   }
   .print-columns{
+    width:100%;
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:3mm;
@@ -163,11 +178,13 @@ main{max-width:720px;margin:auto;padding:11px 11px calc(90px + env(safe-area-ins
     border:1px solid #aeb8c0;
     border-radius:1.8mm;
     overflow:hidden;
-    break-inside:avoid;
-    page-break-inside:avoid;
+    break-inside:auto;
+    page-break-inside:auto;
     margin-bottom:3mm;
   }
   .print-category-title{
+    break-after:avoid;
+    page-break-after:avoid;
     background:#dce6ef;
     border-bottom:1px solid #aeb8c0;
     padding:1.6mm 2mm;
@@ -192,8 +209,18 @@ main{max-width:720px;margin:auto;padding:11px 11px calc(90px + env(safe-area-ins
     font-size:8pt;font-weight:800;
     margin-top:.1mm;
   }
-  .print-item-name{font-weight:700}
-  .print-item-meta{font-size:7pt;color:#555;margin-top:.4mm}
+  .print-item-name{
+    font-weight:700;
+    white-space:normal;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+  }
+  .print-item-meta{
+    font-size:7pt;color:#555;margin-top:.4mm;
+    white-space:normal;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+  }
   .print-item-qty{white-space:nowrap;font-weight:700}
   .print-item.buy .print-check{border-color:#9b5a00;color:#9b5a00}
   .print-item.buy .print-item-name:after{content:" 〔待購〕";font-size:6.8pt;color:#9b5a00}
@@ -215,7 +242,7 @@ main{max-width:720px;margin:auto;padding:11px 11px calc(90px + env(safe-area-ins
   <div class="toprow">
     <div>
       <div class="title">✈️ 出國行李清單</div>
-      <div class="subtitle">v2.2・簡化旅行資訊＋A4列印</div>
+      <div class="subtitle">v2.3・航班時間＋列印自動換行</div>
     </div>
     <button class="icon-btn" onclick="toggleMenu()">⋯</button>
   </div>
@@ -264,8 +291,10 @@ main{max-width:720px;margin:auto;padding:11px 11px calc(90px + env(safe-area-ins
 
       <div id="moreFields" class="grid more-fields">
         <div class="field"><label>當地天氣</label><input id="weather" placeholder="例如：20–25°C"></div>
-        <div class="field"><label>去程航班</label><input id="outbound" placeholder="航空／航班"></div>
-        <div class="field"><label>回程航班</label><input id="returnFlight" placeholder="航空／航班"></div>
+        <div class="field"><label>去程航班</label><input id="outbound" placeholder="例如：長榮 BR132"></div>
+        <div class="field"><label>去程時間</label><input id="outboundTime" type="time"></div>
+        <div class="field"><label>回程航班</label><input id="returnFlight" placeholder="例如：長榮 BR131"></div>
+        <div class="field"><label>回程時間</label><input id="returnTime" type="time"></div>
         <div class="field"><label>隨身行李</label><input id="carryOn" placeholder="例如：1 件／7 kg"></div>
         <div class="field"><label>托運行李</label><input id="checkedBag" placeholder="例如：1 件／23 kg"></div>
         <div class="warning">⚠️ 出發前仍需確認護照效期、簽證、液體、行動電源、食品、藥品及航空公司最新規定。</div>
@@ -371,7 +400,7 @@ function getTripDaysText() {
 }
 function saveInfo() {
   const info = {};
-  ["destination","departureDate","returnDate","companions","weather","outbound","returnFlight","carryOn","checkedBag"].forEach(id => {
+  ["destination","departureDate","returnDate","companions","weather","outbound","outboundTime","returnFlight","returnTime","carryOn","checkedBag"].forEach(id => {
     const el = document.getElementById(id);
     info[id] = el ? el.value : "";
   });
@@ -663,7 +692,7 @@ function resetAll() {
   if(!confirm("確定恢復原始範本嗎？目前修改會被清除。")) return;
   items = cloneDefault();
   localStorage.removeItem(INFO_KEY);
-  ["destination","departureDate","returnDate","companions","weather","outbound","returnFlight","carryOn","checkedBag"].forEach(id => { const el=document.getElementById(id); if(el) el.value=""; });
+  ["destination","departureDate","returnDate","companions","weather","outbound","outboundTime","returnFlight","returnTime","carryOn","checkedBag"].forEach(id => { const el=document.getElementById(id); if(el) el.value=""; });
   saveItems();
   updateTripSummary();
   render();
@@ -692,8 +721,10 @@ function buildPrintView() {
     ["天數", getTripDaysText() || "—"],
     ["同行", getInfoValue("companions") === "—" ? "—" : getInfoValue("companions") + " 人"],
     ["天氣", getInfoValue("weather")],
-    ["去程", getInfoValue("outbound")],
-    ["回程", getInfoValue("returnFlight")],
+    ["去程航班", getInfoValue("outbound")],
+    ["去程時間", getInfoValue("outboundTime")],
+    ["回程航班", getInfoValue("returnFlight")],
+    ["回程時間", getInfoValue("returnTime")],
     ["隨身行李", getInfoValue("carryOn")],
     ["托運行李", getInfoValue("checkedBag")]
   ];
@@ -753,7 +784,7 @@ function printChecklist() {
 
 document.addEventListener("DOMContentLoaded", () => {
   loadInfo();
-  ["destination","departureDate","returnDate","companions","weather","outbound","returnFlight","carryOn","checkedBag"].forEach(id => {
+  ["destination","departureDate","returnDate","companions","weather","outbound","outboundTime","returnFlight","returnTime","carryOn","checkedBag"].forEach(id => {
     const el = document.getElementById(id);
     if(el) el.addEventListener("input", saveInfo);
   });
