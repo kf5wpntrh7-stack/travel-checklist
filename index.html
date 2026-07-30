@@ -2,807 +2,231 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#263849">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>出國行李清單 v2.4</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>銅鑼燒工作室｜電腦影片拼接 v1.5</title>
 <style>
-:root {
-  --bg:#eef1f4; --card:#fff; --navy:#263849; --navy2:#3d566d; --blue:#7e9ebd;
-  --line:#dfe5ea; --text:#23303a; --muted:#73808a; --ready:#3f8d62;
-  --todo:#d39a2c; --buy:#c85f5f; --skip:#8b9197; --shadow:0 7px 24px rgba(30,44,57,.09);
+:root{
+  --bg:#eef3f8;
+  --panel:#ffffff;
+  --panel2:#f4f7fb;
+  --panel3:#edf2f8;
+  --line:#d9e2ee;
+  --text:#2b3645;
+  --muted:#738195;
+  --accent:#6f89a8;
+  --accent2:#839ab6;
+  --accent3:#dfe8f3;
+  --danger:#c98787;
+  --ok:#7aa38d;
+  --shadow:0 10px 28px rgba(63,91,122,.08);
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif}
-button,input,select,textarea{font:inherit}
-button{-webkit-tap-highlight-color:transparent}
-.top{position:sticky;top:0;z-index:30;background:linear-gradient(145deg,var(--navy),var(--navy2));color:#fff;padding:calc(12px + env(safe-area-inset-top)) 14px 12px;box-shadow:0 5px 18px rgba(21,34,45,.2)}
-.toprow{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.title{font-size:20px;font-weight:800}
-.subtitle{font-size:12px;opacity:.78;margin-top:2px}
-.icon-btn{border:0;background:rgba(255,255,255,.13);color:#fff;border-radius:11px;padding:9px 11px}
-.progress-track{height:7px;background:rgba(255,255,255,.18);border-radius:999px;margin-top:11px;overflow:hidden}
-.progress-bar{height:100%;width:0;background:#e8f3ff;border-radius:999px;transition:.25s}
-.stats{display:flex;gap:7px;margin-top:9px;overflow:auto;scrollbar-width:none}
-.stat{white-space:nowrap;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.1);border-radius:999px;padding:5px 9px;font-size:12px}
-main{max-width:720px;margin:auto;padding:11px 11px calc(90px + env(safe-area-inset-bottom))}
-.trip-card,.search-card{background:var(--card);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden}
-.trip-summary{display:flex;align-items:center;gap:10px;padding:12px 13px;cursor:pointer}
-.trip-icon{width:40px;height:40px;border-radius:12px;background:#e7eef5;display:grid;place-items:center;font-size:21px}
-.trip-main{flex:1;min-width:0}
-.trip-name{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.trip-sub{font-size:12px;color:var(--muted);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.chev{color:#82909b;transition:.2s}
-.trip-card.open .chev{transform:rotate(180deg)}
-.trip-edit{display:none;border-top:1px solid var(--line);padding:12px}
-.trip-card.open .trip-edit{display:block}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.main-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.main-fields .destination-field{grid-column:1/-1}
-.more-toggle{
-  width:100%;border:0;background:#edf2f5;color:#40515e;border-radius:10px;
-  padding:10px 11px;margin-top:10px;font-weight:750;text-align:left;
-  display:flex;align-items:center;justify-content:space-between
-}
-.more-toggle .arrow{transition:.2s}
-.more-toggle.open .arrow{transform:rotate(180deg)}
-.more-fields{display:none;margin-top:9px}
-.more-fields.open{display:grid}
-.auto-days{
-  grid-column:1/-1;background:#eef5fa;border:1px solid #d6e3ec;border-radius:10px;
-  padding:9px 10px;font-size:12px;color:#516574
-}
-@media(max-width:430px){
-  .main-fields,.grid{grid-template-columns:1fr}
-  .main-fields .destination-field,.warning,.auto-days{grid-column:1}
-}
-.field label{display:block;color:var(--muted);font-size:12px;margin:0 0 5px}
-.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;color:var(--text)}
-.warning{grid-column:1/-1;background:#fff4cf;border:1px solid #ecd788;border-radius:10px;padding:9px 10px;font-size:12px;line-height:1.45}
-.search-card{padding:10px}
-.search-row{display:flex;gap:8px}
-.search-row input{flex:1;min-width:0;border:1px solid var(--line);border-radius:11px;padding:10px 12px}
-.soft-btn{border:0;background:#e9eef2;color:#334553;border-radius:11px;padding:9px 11px;font-weight:700}
-.category{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:9px;overflow:hidden;box-shadow:0 3px 13px rgba(31,45,57,.05)}
-.cat-head{width:100%;border:0;background:#fff;color:var(--text);display:flex;align-items:center;gap:10px;padding:13px;text-align:left}
-.cat-title{font-weight:800;flex:1}
-.cat-count{font-size:12px;color:var(--muted)}
-.cat-chevron{color:#84919c;transition:.2s}
-.category.open .cat-chevron{transform:rotate(90deg)}
-.cat-body{display:none;border-top:1px solid var(--line)}
-.category.open .cat-body{display:block}
-.item{display:grid;grid-template-columns:42px 1fr auto;gap:8px;align-items:center;padding:10px 11px;border-top:1px solid var(--line);min-height:61px}
-.item:first-child{border-top:0}
-.check{width:34px;height:34px;border-radius:50%;border:2px solid #bcc6ce;background:#fff;display:grid;place-items:center;font-size:18px;color:#fff}
-.check.ready{background:var(--ready);border-color:var(--ready)}
-.check.buy{background:#fff4f4;border-color:var(--buy);color:var(--buy)}
-.check.skip{background:#eff1f2;border-color:var(--skip);color:var(--skip)}
-.item-main{min-width:0}
-.item-name{font-weight:750;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.item-meta{font-size:12px;color:var(--muted);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.item-right{display:flex;align-items:center;gap:6px}
-.qty{min-width:27px;text-align:center;background:#edf1f4;border-radius:8px;padding:5px 7px;font-size:12px;font-weight:800}
-.edit-arrow{border:0;background:transparent;color:#87939d;font-size:18px;padding:7px 2px 7px 5px}
-.empty{padding:25px;text-align:center;color:var(--muted)}
-.bottom{position:fixed;left:0;right:0;bottom:0;z-index:35;background:rgba(250,251,252,.96);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 8px calc(8px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
-.filter{border:0;background:transparent;color:#65737e;border-radius:10px;padding:9px 3px;font-size:12px;font-weight:750}
-.filter.active{background:var(--navy);color:#fff}
-.fab{position:fixed;right:14px;bottom:calc(72px + env(safe-area-inset-bottom));z-index:34;border:0;border-radius:999px;background:var(--navy);color:#fff;padding:13px 17px;font-weight:800;box-shadow:0 9px 23px rgba(27,42,54,.28)}
-.modal{position:fixed;inset:0;background:rgba(17,27,35,.48);z-index:60;display:none;align-items:flex-end}
-.modal.show{display:flex}
-.sheet{width:100%;max-height:90vh;overflow:auto;background:#fff;border-radius:20px 20px 0 0;padding:10px 15px calc(17px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(0,0,0,.12)}
-.grabber{width:42px;height:4px;border-radius:999px;background:#d4d9dd;margin:2px auto 11px}
-.sheet h2{font-size:18px;margin:0 0 13px}
-.sheet .field{margin-bottom:10px}
-.sheet-actions{display:flex;gap:8px;margin-top:13px}
-.sheet-actions button{flex:1}
-.primary{background:var(--navy)!important;color:#fff!important}
-.danger{background:#f6e4e4!important;color:#9d4646!important}
-.menu{position:fixed;inset:0;background:rgba(17,27,35,.35);z-index:55;display:none;align-items:flex-start;justify-content:flex-end;padding:calc(58px + env(safe-area-inset-top)) 12px 0}
-.menu.show{display:flex}
-.menu-box{width:190px;background:#fff;border-radius:13px;padding:6px;box-shadow:var(--shadow)}
-.menu-box button{display:block;width:100%;border:0;background:#fff;text-align:left;padding:11px;border-radius:9px;color:var(--text)}
-.menu-box button:active{background:#eef2f5}
-.hidden{display:none!important}
-@media(min-width:700px){
-  .modal{align-items:center;justify-content:center;padding:20px}
-  .sheet{max-width:520px;border-radius:20px;padding-bottom:18px}
-  .fab{right:calc((100vw - 720px)/2 + 14px)}
-}
-
-.print-view{display:none}
-@media print{
-  @page{size:A4 landscape;margin:7mm}
-  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  html,body{background:#fff!important;margin:0!important;padding:0!important}
-  body>*:not(#printView){display:none!important}
-  #printView{
-    display:block!important;
-    color:#111;
-    font-family:"Microsoft JhengHei","PingFang TC",Arial,sans-serif;
-    font-size:8.5pt;
-    line-height:1.25;
-  }
-  .print-head{
-    display:flex;
-    align-items:flex-end;
-    justify-content:space-between;
-    border-bottom:2px solid #263849;
-    padding-bottom:2.5mm;
-    margin-bottom:3mm;
-  }
-  .print-head h1{margin:0;font-size:18pt;letter-spacing:.5pt}
-  .print-head .print-progress{font-size:10pt;font-weight:700}
-  .print-info{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:1.5mm 3mm;
-    border:1px solid #aeb8c0;
-    border-radius:2mm;
-    padding:2.5mm 3mm;
-    margin-bottom:3mm;
-  }
-  .print-info-item{
-    display:grid;
-    grid-template-columns:auto minmax(0,1fr);
-    gap:1.5mm;
-    min-width:0;
-    align-items:start;
-  }
-  .print-info-label{font-weight:700;white-space:nowrap}
-  .print-info-value{
-    min-width:0;
-    white-space:normal;
-    overflow:visible;
-    text-overflow:clip;
-    overflow-wrap:anywhere;
-    word-break:break-word;
-    line-height:1.3;
-  }
-  .print-alert{
-    grid-column:1/-1;
-    border-top:1px solid #d2d8dd;
-    padding-top:1.5mm;
-    font-size:7.5pt;
-  }
-  .print-columns{
-    width:100%;
-    display:block;
-  }
-  .print-category{
-    width:100%;
-    border:1px solid #aeb8c0;
-    border-radius:1.8mm;
-    overflow:hidden;
-    break-inside:avoid;
-    page-break-inside:avoid;
-    margin-bottom:3mm;
-  }
-  .print-category.long-category{
-    break-inside:auto;
-    page-break-inside:auto;
-  }
-  .print-category-body{
-    display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    column-gap:3mm;
-    row-gap:0;
-    padding:0 1.8mm 1.2mm;
-  }
-  .print-category-title{
-    break-after:avoid;
-    page-break-after:avoid;
-    background:#dce6ef;
-    border-bottom:1px solid #aeb8c0;
-    padding:1.6mm 2mm;
-    font-weight:800;
-    font-size:9.5pt;
-    display:flex;
-    justify-content:space-between;
-  }
-  .print-item{
-    display:grid;
-    grid-template-columns:5mm minmax(0,1fr) auto;
-    gap:1.5mm;
-    align-items:start;
-    padding:1.15mm 0;
-    border-top:1px solid #e1e5e8;
-    break-inside:avoid;
-    page-break-inside:avoid;
-    min-width:0;
-  }
-  .print-item:nth-child(-n+3){border-top:0}
-  .print-check{
-    width:3.8mm;height:3.8mm;
-    border:1px solid #444;
-    display:grid;place-items:center;
-    font-size:8pt;font-weight:800;
-    margin-top:.1mm;
-  }
-  .print-item-name{
-    font-weight:700;
-    white-space:normal;
-    overflow-wrap:anywhere;
-    word-break:break-word;
-  }
-  .print-item-meta{
-    font-size:7pt;color:#555;margin-top:.4mm;
-    white-space:normal;
-    overflow-wrap:anywhere;
-    word-break:break-word;
-  }
-  .print-item-qty{white-space:nowrap;font-weight:700}
-  .print-item.buy .print-check{border-color:#9b5a00;color:#9b5a00}
-  .print-item.buy .print-item-name:after{content:" 〔待購〕";font-size:6.8pt;color:#9b5a00}
-  .print-item.skip{color:#8a8a8a;text-decoration:line-through}
-  .print-foot{
-    margin-top:2mm;
-    border-top:1px solid #b9c1c7;
-    padding-top:1.5mm;
-    text-align:right;
-    font-size:7pt;
-    color:#555;
-  }
-}
-
+body{margin:0;background:linear-gradient(180deg,#f6f9fc 0%,#eef3f8 100%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}
+button,input,select{font:inherit}
+.app{max-width:1320px;margin:auto;padding:22px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:16px}
+h1{font-size:28px;margin:0;color:#334155;letter-spacing:.3px}
+.sub{font-size:13px;color:var(--muted);margin-top:4px}
+.toolbar,.bottom,.result,.side,.preview-wrap{background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow)}
+.toolbar,.bottom{display:flex;flex-wrap:wrap;gap:10px;align-items:center;border-radius:18px;padding:14px}
+.group{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.label{font-size:13px;color:var(--muted);font-weight:800}
+.seg{display:flex;gap:6px}
+button{border:1px solid var(--line);border-radius:11px;padding:9px 14px;color:var(--text);background:var(--panel2);cursor:pointer;transition:.18s ease}
+button.active,.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+button:hover{background:var(--accent3);border-color:#c9d6e6}
+button.active:hover,.primary:hover{background:var(--accent2);border-color:var(--accent2)}
+input[type=number],select{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:86px;outline:none}
+input[type=number]:focus,select:focus{border-color:#b7c7da;box-shadow:0 0 0 3px rgba(127,154,184,.12)}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;margin-top:16px}
+.preview-wrap{border-radius:20px;padding:18px;min-height:520px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#ffffff 0%,#f9fbfe 100%)}
+.grid{width:min(100%,500px);display:grid;gap:8px;background:#dde6f1;padding:8px;border-radius:16px}
+.layout-2{grid-template:repeat(2,1fr)/1fr;aspect-ratio:9/16}
+.layout-3{grid-template:repeat(3,1fr)/1fr;aspect-ratio:9/16}
+.layout-4{grid-template:repeat(2,1fr)/repeat(2,1fr);aspect-ratio:1}
+.slot{position:relative;overflow:hidden;background:#edf2f8;border:1.5px dashed #bfcbda;border-radius:14px;cursor:pointer;touch-action:none;user-select:none}
+.slot.selected{border:2px solid var(--accent);box-shadow:0 0 0 4px rgba(111,137,168,.16)}
+.slot video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#dfe7f1;display:block;pointer-events:none;transform-origin:center center;will-change:transform}
+.empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#76879a;gap:4px}
+.empty b{font-size:30px;color:#7e96b3}
+.badge{position:absolute;left:10px;top:10px;background:rgba(56,72,95,.74);padding:5px 8px;border-radius:999px;font-size:12px;color:#fff}
+.remove{position:absolute;right:10px;top:10px;background:rgba(56,72,95,.74);color:#fff;border:none;padding:5px 9px}
+.side{border-radius:20px;padding:16px;min-height:520px;background:linear-gradient(180deg,#ffffff 0%,#f8fbfe 100%)}
+.side h2{font-size:17px;margin:0 0 10px;color:#334155}.hint,.notice{font-size:12.5px;color:var(--muted);line-height:1.7}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:12px 13px;margin-top:10px}
+.card-title{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:8px;color:#3c4b60}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:7px 0;font-size:13px;color:#405064}
+.row input[type=range]{width:145px;accent-color:#7c95b2}.adjust-actions{display:flex;gap:7px;margin-top:9px}.adjust-actions button{flex:1;padding:7px 8px;font-size:12px}
+.bottom{margin-top:16px;border-radius:18px}
+.primary{font-weight:800;padding:10px 22px}.primary:disabled{opacity:.45}
+.progress{height:10px;background:#e5edf6;border-radius:999px;overflow:hidden;flex:1}.bar{height:100%;width:0;background:linear-gradient(90deg,#86b39d,#78a58d)}
+.status{min-width:220px;color:var(--muted);font-size:13px}
+.result{display:none;margin-top:14px;border-radius:18px;padding:14px}
+.result h2{margin:0 0 10px;color:#334155;font-size:17px}
+.result video{width:min(100%,500px);max-height:440px;background:#dfe7f1;border-radius:12px}
+.download{display:inline-block;margin-top:10px;padding:10px 15px;background:var(--ok);color:#fff;text-decoration:none;border-radius:10px;font-weight:800}
+canvas,.hidden-media{display:none!important}
+@media(max-width:900px){.workspace{grid-template-columns:1fr}.side{min-height:auto}.preview-wrap{min-height:420px}.grid{width:min(100%,460px)}}
 </style>
 </head>
 <body>
-<header class="top">
-  <div class="toprow">
-    <div>
-      <div class="title">✈️ 出國行李清單</div>
-      <div class="subtitle">v2.4・分類式清楚列印</div>
-    </div>
-    <button class="icon-btn" onclick="toggleMenu()">⋯</button>
-  </div>
-  <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
-  <div class="stats">
-    <div class="stat" id="statReady">已完成 0%</div>
-    <div class="stat" id="statTodo">待準備 0</div>
-    <div class="stat" id="statBuy">待購買 0</div>
-  </div>
-</header>
-
-<main>
-  <section class="trip-card" id="tripCard">
-    <div class="trip-summary" onclick="toggleTrip()">
-      <div class="trip-icon">🌍</div>
-      <div class="trip-main">
-        <div class="trip-name" id="tripName">尚未設定旅行目的地</div>
-        <div class="trip-sub" id="tripSub">點這裡設定目的地與旅行日期</div>
-      </div>
-      <div class="chev">⌄</div>
-    </div>
-    <div class="trip-edit">
-      <div class="main-fields">
-        <div class="field destination-field">
-          <label>目的地</label>
-          <input id="destination" placeholder="例如：日本大阪">
-        </div>
-        <div class="field">
-          <label>出發日期</label>
-          <input id="departureDate" type="date">
-        </div>
-        <div class="field">
-          <label>回程日期</label>
-          <input id="returnDate" type="date">
-        </div>
-        <div class="field">
-          <label>同行人數</label>
-          <input id="companions" type="number" min="1" inputmode="numeric" placeholder="例如：2">
-        </div>
-        <div class="auto-days" id="autoDays">填入出發與回程日期後，會自動計算旅遊天數。</div>
-      </div>
-
-      <button id="moreToggle" class="more-toggle" onclick="toggleMoreInfo()">
-        <span>更多資訊（選填）</span><span class="arrow">⌄</span>
-      </button>
-
-      <div id="moreFields" class="grid more-fields">
-        <div class="field"><label>當地天氣</label><input id="weather" placeholder="例如：20–25°C"></div>
-        <div class="field"><label>去程航班</label><input id="outbound" placeholder="例如：長榮 BR132"></div>
-        <div class="field"><label>去程時間</label><input id="outboundTime" type="time"></div>
-        <div class="field"><label>回程航班</label><input id="returnFlight" placeholder="例如：長榮 BR131"></div>
-        <div class="field"><label>回程時間</label><input id="returnTime" type="time"></div>
-        <div class="field"><label>隨身行李</label><input id="carryOn" placeholder="例如：1 件／7 kg"></div>
-        <div class="field"><label>托運行李</label><input id="checkedBag" placeholder="例如：1 件／23 kg"></div>
-        <div class="warning">⚠️ 出發前仍需確認護照效期、簽證、液體、行動電源、食品、藥品及航空公司最新規定。</div>
-      </div>
-    </div>
-  </section>
-
-  <section class="search-card">
-    <div class="search-row">
-      <input id="searchBox" placeholder="搜尋物品、位置或備註…" oninput="render()">
-      <button class="soft-btn" onclick="collapseAll()">收合</button>
-    </div>
-  </section>
-
-  <div id="list"></div>
-</main>
-
-<button class="fab" onclick="openAdd()">＋ 新增</button>
-
-<nav class="bottom">
-  <button class="filter active" data-filter="all" onclick="setFilter('all',this)">全部</button>
-  <button class="filter" data-filter="todo" onclick="setFilter('todo',this)">待準備</button>
-  <button class="filter" data-filter="buy" onclick="setFilter('buy',this)">待購買</button>
-  <button class="filter" data-filter="ready" onclick="setFilter('ready',this)">已完成</button>
-</nav>
-
-<div class="menu" id="menu" onclick="closeMenu(event)">
-  <div class="menu-box">
-    <button onclick="exportBackup()">匯出備份</button>
-    <button onclick="document.getElementById('importFile').click()">匯入備份</button>
-    <button onclick="printChecklist()">列印</button>
-    <button onclick="resetAll()">恢復原始範本</button>
-    <input id="importFile" class="hidden" type="file" accept="application/json" onchange="importBackup(event)">
-  </div>
+<div class="app">
+<header><div><h1>銅鑼燒工作室｜電腦影片拼接</h1><div class="sub">v1.5｜畫面位置調整版・2 格、3 格、4 格</div></div><div class="sub">Windows／Mac・Chrome／Edge</div></header>
+<div class="toolbar">
+ <div class="group"><span class="label">版型</span><div class="seg" id="layouts"><button data-n="2" class="active">2 格</button><button data-n="3">3 格</button><button data-n="4">4 格</button></div></div>
+ <div class="group"><span class="label">成品長度</span><div class="seg" id="presets"><button data-s="5">5 秒</button><button data-s="10" class="active">10 秒</button><button data-s="15">15 秒</button></div><input id="duration" type="number" min="1" max="30" value="10"><span class="label">秒</span></div>
+ <div class="group"><span class="label">畫質</span><select id="quality"><option value="540">540p 快速</option><option value="720" selected>720p 清晰</option></select></div>
+ <button id="preview">同步預覽</button><button id="pause">全部暫停</button>
 </div>
-
-<div class="modal" id="itemModal" onclick="closeSheet(event,'itemModal')">
-  <div class="sheet">
-    <div class="grabber"></div>
-    <h2 id="itemModalTitle">編輯項目</h2>
-    <input type="hidden" id="editId">
-    <div class="field"><label>分類</label><select id="editCategory"></select></div>
-    <div class="field"><label>項目名稱</label><input id="editName"></div>
-    <div class="grid">
-      <div class="field"><label>數量</label><input id="editQty" type="number" min="0"></div>
-      <div class="field"><label>狀態</label>
-        <select id="editStatus">
-          <option>待準備</option><option>✔ 已準備</option><option>待購買</option><option>✖ 不攜帶</option>
-        </select>
-      </div>
-    </div>
-    <div class="field"><label>放置位置</label>
-      <select id="editLocation">
-        <option>托運行李</option><option>手提行李</option><option>後背包</option>
-        <option>隨身小包</option><option>身上</option><option>未指定</option>
-      </select>
-    </div>
-    <div class="field"><label>備註</label><textarea id="editNote" rows="3"></textarea></div>
-    <div class="sheet-actions">
-      <button class="soft-btn danger" id="deleteBtn" onclick="deleteCurrent()">刪除</button>
-      <button class="soft-btn" onclick="hideSheet('itemModal')">取消</button>
-      <button class="soft-btn primary" onclick="saveCurrent()">儲存</button>
-    </div>
-  </div>
+<div class="workspace">
+ <div class="preview-wrap"><div id="grid" class="grid layout-2"></div></div>
+ <aside class="side"><h2>每格設定</h2><div class="hint">點空白框加入影片；加入後可直接拖曳畫面。電腦可用滑鼠滾輪縮放，手機可單指拖曳、雙指縮放。</div><div id="settings"></div></aside>
 </div>
-
-
-<div id="printView" class="print-view" aria-hidden="true"></div>
-
+<div class="bottom"><button class="primary" id="export">輸出影片</button><div class="progress"><div class="bar" id="bar"></div></div><div class="status" id="status">就緒</div></div>
+<div class="notice">操作提示：加入影片後，直接在畫面上拖曳位置；電腦滾輪、手機雙指可縮放。輸出時不要切換分頁。</div>
+<div class="result" id="result"><h2>輸出結果</h2><video id="outVideo" controls></video><br><a id="download" class="download">下載影片</a></div>
+<input id="picker" type="file" accept="video/*" hidden><canvas id="canvas"></canvas>
+<div id="audioPool" class="hidden-media"></div>
+</div>
 <script>
-const DEFAULT_ITEMS = [{"id": "item_1", "category": "🧳 行李", "name": "行李箱", "qty": 1, "status": "待準備", "location": "托運行李", "note": "填寫尺寸、顏色或辨識特徵"}, {"id": "item_2", "category": "🧳 行李", "name": "行李袋", "qty": 1, "status": "待準備", "location": "手提行李", "note": "行李箱不夠裝時可使用"}, {"id": "item_3", "category": "🧳 行李", "name": "後背包", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_4", "category": "🧳 行李", "name": "隱形腰包", "qty": 1, "status": "待準備", "location": "身上", "note": "護照、現金等重要物品"}, {"id": "item_5", "category": "🧳 行李", "name": "衣物收納壓縮袋", "qty": 2, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_6", "category": "🧳 行李", "name": "盥洗用品收納包", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_7", "category": "🧳 行李", "name": "化妝包", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_8", "category": "🧳 行李", "name": "環保購物袋", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_9", "category": "🧳 行李", "name": "行李箱束帶", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_10", "category": "🧳 行李", "name": "鎖頭", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_11", "category": "🧳 行李", "name": "行李電子秤", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_12", "category": "🧳 行李", "name": "手機掛繩", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_13", "category": "🧳 行李", "name": "頸枕", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_14", "category": "🧳 行李", "name": "眼罩", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_15", "category": "🪪 證件", "name": "機票／電子機票", "qty": 1, "status": "待準備", "location": "後背包", "note": "建議另存離線版本"}, {"id": "item_16", "category": "🪪 證件", "name": "護照", "qty": 1, "status": "待準備", "location": "身上", "note": "確認效期與空白頁"}, {"id": "item_17", "category": "🪪 證件", "name": "身分證", "qty": 1, "status": "待準備", "location": "身上", "note": ""}, {"id": "item_18", "category": "🪪 證件", "name": "簽證資料", "qty": 1, "status": "待準備", "location": "後背包", "note": "依目的地需求"}, {"id": "item_19", "category": "🪪 證件", "name": "駕照／國際駕照", "qty": 1, "status": "待準備", "location": "後背包", "note": "租車時確認需求"}, {"id": "item_20", "category": "🪪 證件", "name": "行程表", "qty": 1, "status": "待準備", "location": "後背包", "note": "地圖、導覽手冊"}, {"id": "item_21", "category": "🪪 證件", "name": "住宿確認單", "qty": 1, "status": "待準備", "location": "後背包", "note": "保留訂房紀錄"}, {"id": "item_22", "category": "🪪 證件", "name": "交通票券", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_23", "category": "🪪 證件", "name": "景點票券", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_24", "category": "🪪 證件", "name": "2 吋大頭照", "qty": 2, "status": "待準備", "location": "後背包", "note": "備用"}, {"id": "item_25", "category": "🪪 證件", "name": "鑰匙", "qty": 1, "status": "待準備", "location": "身上", "note": "家用、行李箱"}, {"id": "item_26", "category": "🪪 證件", "name": "外幣現金", "qty": 1, "status": "待準備", "location": "身上", "note": ""}, {"id": "item_27", "category": "🪪 證件", "name": "信用卡", "qty": 2, "status": "待準備", "location": "身上", "note": ""}, {"id": "item_28", "category": "🪪 證件", "name": "提款卡", "qty": 1, "status": "待準備", "location": "身上", "note": ""}, {"id": "item_29", "category": "🪪 證件", "name": "緊急聯絡資料", "qty": 1, "status": "待準備", "location": "後背包", "note": "紙本與手機各留一份"}, {"id": "item_30", "category": "🪪 證件", "name": "旅遊保險資料", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_31", "category": "🪪 證件", "name": "健康／疫苗資料", "qty": 1, "status": "待準備", "location": "後背包", "note": "依目的地需求"}, {"id": "item_32", "category": "🪪 證件", "name": "台灣名產", "qty": 1, "status": "待準備", "location": "托運行李", "note": "食品須確認入境規定"}, {"id": "item_33", "category": "🪪 證件", "name": "台灣特色小禮", "qty": 2, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_34", "category": "🪪 證件", "name": "名片", "qty": 10, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_35", "category": "💻 3C", "name": "手機", "qty": 1, "status": "待準備", "location": "身上", "note": ""}, {"id": "item_36", "category": "💻 3C", "name": "手機充電器", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_37", "category": "💻 3C", "name": "充電線", "qty": 2, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_38", "category": "💻 3C", "name": "行動電源", "qty": 1, "status": "待準備", "location": "手提行李", "note": "不可任意放入托運，依航空規定"}, {"id": "item_39", "category": "💻 3C", "name": "轉接插頭", "qty": 1, "status": "待準備", "location": "手提行李", "note": "確認目的地插座規格"}, {"id": "item_40", "category": "💻 3C", "name": "延長線", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_41", "category": "💻 3C", "name": "耳機", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_42", "category": "💻 3C", "name": "相機", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_43", "category": "💻 3C", "name": "記憶卡", "qty": 2, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_44", "category": "💻 3C", "name": "備用電池", "qty": 1, "status": "待準備", "location": "手提行李", "note": "依航空規定收納"}, {"id": "item_45", "category": "💻 3C", "name": "平板／電子書閱讀器", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_46", "category": "💻 3C", "name": "筆記型電腦", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_47", "category": "💻 3C", "name": "SIM／eSIM 資料", "qty": 1, "status": "待準備", "location": "身上", "note": "開通方式與漫遊設定"}, {"id": "item_48", "category": "👕 衣物", "name": "上衣", "qty": 5, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_49", "category": "👕 衣物", "name": "下著", "qty": 3, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_50", "category": "👕 衣物", "name": "內衣褲", "qty": 6, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_51", "category": "👕 衣物", "name": "襪子", "qty": 6, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_52", "category": "👕 衣物", "name": "睡衣", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_53", "category": "👕 衣物", "name": "外套", "qty": 1, "status": "待準備", "location": "身上", "note": ""}, {"id": "item_54", "category": "👕 衣物", "name": "保暖衣", "qty": 2, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_55", "category": "👕 衣物", "name": "帽子", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_56", "category": "👕 衣物", "name": "圍巾", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_57", "category": "👕 衣物", "name": "手套", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_58", "category": "👕 衣物", "name": "泳衣", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_59", "category": "👕 衣物", "name": "鞋子", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_60", "category": "👕 衣物", "name": "拖鞋", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_61", "category": "👕 衣物", "name": "洗衣袋", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_62", "category": "🧴 生活用品", "name": "牙刷／牙膏", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_63", "category": "🧴 生活用品", "name": "毛巾", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_64", "category": "🧴 生活用品", "name": "洗面乳", "qty": 1, "status": "待準備", "location": "托運行李", "note": "液體容量依航空規定"}, {"id": "item_65", "category": "🧴 生活用品", "name": "洗髮／沐浴用品", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_66", "category": "🧴 生活用品", "name": "梳子", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_67", "category": "🧴 生活用品", "name": "刮鬍刀", "qty": 1, "status": "待準備", "location": "托運行李", "note": "刀具類請依航空規定"}, {"id": "item_68", "category": "🧴 生活用品", "name": "保養品", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_69", "category": "🧴 生活用品", "name": "化妝品", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_70", "category": "🧴 生活用品", "name": "防曬用品", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_71", "category": "🧴 生活用品", "name": "衛生紙", "qty": 2, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_72", "category": "🧴 生活用品", "name": "濕紙巾", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_73", "category": "🧴 生活用品", "name": "口罩", "qty": 5, "status": "待準備", "location": "後背包", "note": ""}, {"id": "item_74", "category": "🧴 生活用品", "name": "雨傘", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_75", "category": "🧴 生活用品", "name": "水壺", "qty": 1, "status": "待準備", "location": "手提行李", "note": "安檢前保持空瓶"}, {"id": "item_76", "category": "🧴 生活用品", "name": "眼鏡／隱形眼鏡", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_77", "category": "🧴 生活用品", "name": "生理用品", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_78", "category": "💊 藥品", "name": "個人常備藥", "qty": 1, "status": "待準備", "location": "手提行李", "note": "保留原包裝與處方資料"}, {"id": "item_79", "category": "💊 藥品", "name": "腸胃藥", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_80", "category": "💊 藥品", "name": "止痛藥", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_81", "category": "💊 藥品", "name": "過敏藥", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_82", "category": "💊 藥品", "name": "暈車藥", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_83", "category": "💊 藥品", "name": "OK 繃／傷口護理", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_84", "category": "💊 藥品", "name": "防蚊液", "qty": 1, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_85", "category": "💊 藥品", "name": "藥品處方／英文證明", "qty": 1, "status": "待準備", "location": "手提行李", "note": "特殊藥品依目的地規定"}, {"id": "item_86", "category": "✏️ 其他", "name": "筆", "qty": 2, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_87", "category": "✏️ 其他", "name": "小筆記本", "qty": 1, "status": "待準備", "location": "手提行李", "note": ""}, {"id": "item_88", "category": "✏️ 其他", "name": "零食", "qty": 1, "status": "待準備", "location": "手提行李", "note": "食品請確認入境規定"}, {"id": "item_89", "category": "✏️ 其他", "name": "衣架", "qty": 2, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_90", "category": "✏️ 其他", "name": "夾鏈袋", "qty": 5, "status": "待準備", "location": "托運行李", "note": ""}, {"id": "item_91", "category": "✏️ 其他", "name": "備用購物袋", "qty": 1, "status": "待準備", "location": "後背包", "note": ""}];
-const CATEGORIES = ["🧳 行李", "🪪 證件", "💻 3C", "👕 衣物", "🧴 生活用品", "💊 藥品", "✏️ 其他"];
-const STORAGE_KEY = "dorayaki_travel_checklist_v1";
-const INFO_KEY = "dorayaki_travel_info_v1";
-let currentFilter = "all";
-let items = loadItems();
-let openCategories = new Set();
+const $=s=>document.querySelector(s);
+let layout=2,pickIndex=0,outURL="",selectedIndex=0;
+const slots=Array.from({length:4},()=>({file:null,url:"",start:0,volume:1,mute:false,zoom:1,x:0,y:0}));
+const gesture=new Map();
 
-function cloneDefault() {
-  return JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
+function applyTransform(video,s){
+ video.style.transform=`translate(${s.x*24}%,${s.y*24}%) scale(${s.zoom})`;
 }
-function loadItems() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return Array.isArray(saved) ? saved : cloneDefault();
-  } catch(e) {
-    return cloneDefault();
+function selectSlot(i){selectedIndex=i;render()}
+
+function render(){
+ const g=$("#grid");g.className=`grid layout-${layout}`;g.innerHTML="";
+ for(let i=0;i<layout;i++){
+  const s=slots[i],d=document.createElement("div");
+  d.className=`slot${selectedIndex===i?" selected":""}`;d.dataset.index=i;
+  if(s.file){
+   d.innerHTML=`<video src="${s.url}" muted playsinline preload="auto"></video><span class="badge">第 ${i+1} 格</span><button class="remove">移除</button>`;
+   const v=d.querySelector("video");applyTransform(v,s);
+   d.querySelector(".remove").onclick=e=>{e.stopPropagation();clearSlot(i)};
+   bindGestures(d,i);
+   d.onclick=e=>{if(!e.target.closest('.remove'))selectSlot(i)};
+  }else{
+   d.innerHTML=`<div class="empty"><b>＋</b><span>點此選擇第 ${i+1} 格影片</span></div>`;
+   d.onclick=()=>pick(i);
   }
-}
-function saveItems() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  updateSummary();
-}
-function getTripDaysText() {
-  const start = document.getElementById("departureDate").value;
-  const end = document.getElementById("returnDate").value;
-  if(!start || !end) return "";
-  const startDate = new Date(start + "T00:00:00");
-  const endDate = new Date(end + "T00:00:00");
-  const diff = Math.round((endDate - startDate) / 86400000);
-  if(diff < 0) return "回程日期不可早於出發日期";
-  return `${diff + 1} 天 ${diff} 夜`;
-}
-function saveInfo() {
-  const info = {};
-  ["destination","departureDate","returnDate","companions","weather","outbound","outboundTime","returnFlight","returnTime","carryOn","checkedBag"].forEach(id => {
-    const el = document.getElementById(id);
-    info[id] = el ? el.value : "";
-  });
-  info.days = getTripDaysText();
-  localStorage.setItem(INFO_KEY, JSON.stringify(info));
-  updateTripSummary();
-}
-function loadInfo() {
-  try {
-    const info = JSON.parse(localStorage.getItem(INFO_KEY) || "{}");
-    // 舊版的「天數」仍保留於備份中，但新版改由日期自動計算。
-    Object.entries(info).forEach(([k,v]) => {
-      const el = document.getElementById(k);
-      if(el) el.value = v || "";
-    });
-  } catch(e) {}
-  updateTripSummary();
-}
-function formatDateRange() {
-  const start = document.getElementById("departureDate").value;
-  const end = document.getElementById("returnDate").value;
-  if(!start && !end) return "";
-  const fmt = value => {
-    if(!value) return "";
-    const [y,m,d] = value.split("-");
-    return `${Number(m)}/${Number(d)}`;
-  };
-  if(start && end) return `${fmt(start)}～${fmt(end)}`;
-  return start ? `${fmt(start)} 出發` : `${fmt(end)} 回程`;
-}
-function updateTripSummary() {
-  const destination = document.getElementById("destination").value.trim();
-  const companionsRaw = document.getElementById("companions").value.trim();
-  const daysText = getTripDaysText();
-  const dateRange = formatDateRange();
-  const autoDays = document.getElementById("autoDays");
-
-  document.getElementById("tripName").textContent = destination || "尚未設定旅行目的地";
-
-  const parts = [];
-  if(dateRange) parts.push(dateRange);
-  if(daysText && !daysText.includes("不可")) parts.push(daysText);
-  if(companionsRaw) parts.push(`${companionsRaw} 人`);
-
-  document.getElementById("tripSub").textContent =
-    parts.join("｜") || "點這裡設定目的地與旅行日期";
-
-  if(daysText) {
-    autoDays.textContent = daysText.includes("不可") ? `⚠️ ${daysText}` : `自動計算：${daysText}`;
-  } else {
-    autoDays.textContent = "填入出發與回程日期後，會自動計算旅遊天數。";
-  }
-}
-function toggleTrip() {
-  document.getElementById("tripCard").classList.toggle("open");
-}
-function toggleMoreInfo() {
-  document.getElementById("moreFields").classList.toggle("open");
-  document.getElementById("moreToggle").classList.toggle("open");
-}
-function esc(v) {
-  return String(v ?? "").replace(/[&<>"']/g, s => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[s]));
-}
-function matchesFilter(item) {
-  if(currentFilter === "todo") return item.status === "待準備";
-  if(currentFilter === "buy") return item.status === "待購買";
-  if(currentFilter === "ready") return item.status === "✔ 已準備";
-  return true;
-}
-function render() {
-  const q = (document.getElementById("searchBox").value || "").trim().toLowerCase();
-  const grouped = {};
-  CATEGORIES.forEach(c => grouped[c] = []);
-  items.forEach(item => {
-    const hay = [item.name,item.location,item.note,item.category,item.status].join(" ").toLowerCase();
-    if(matchesFilter(item) && (!q || hay.includes(q))) {
-      if(!grouped[item.category]) grouped[item.category] = [];
-      grouped[item.category].push(item);
-    }
-  });
-
-  const root = document.getElementById("list");
-  root.innerHTML = "";
-  let visible = 0;
-
-  Object.entries(grouped).forEach(([category, arr]) => {
-    if(!arr.length) return;
-    visible += arr.length;
-    const allCategoryItems = items.filter(x => x.category === category && x.status !== "✖ 不攜帶");
-    const readyCount = allCategoryItems.filter(x => x.status === "✔ 已準備").length;
-    const section = document.createElement("section");
-    section.className = "category" + (openCategories.has(category) || q ? " open" : "");
-    section.innerHTML = `
-      <button class="cat-head" onclick="toggleCategory('${encodeURIComponent(category)}')">
-        <span class="cat-title">${esc(category)}</span>
-        <span class="cat-count">${readyCount}／${allCategoryItems.length}</span>
-        <span class="cat-chevron">›</span>
-      </button>
-      <div class="cat-body"></div>`;
-    const body = section.querySelector(".cat-body");
-    arr.forEach(item => body.appendChild(itemRow(item)));
-    root.appendChild(section);
-  });
-
-  if(!visible) root.innerHTML = '<div class="empty">目前沒有符合條件的項目</div>';
-  updateSummary();
-}
-function itemRow(item) {
-  const el = document.createElement("div");
-  el.className = "item";
-  const iconClass = item.status === "✔ 已準備" ? "ready" :
-                    item.status === "待購買" ? "buy" :
-                    item.status === "✖ 不攜帶" ? "skip" : "";
-  const iconText = item.status === "✔ 已準備" ? "✓" :
-                   item.status === "待購買" ? "🛒" :
-                   item.status === "✖ 不攜帶" ? "—" : "";
-  const meta = [
-    item.status === "待購買" ? "待購買" : "",
-    item.location || "",
-    item.note || ""
-  ].filter(Boolean).join("・");
-
-  el.innerHTML = `
-    <button class="check ${iconClass}" onclick="quickToggle('${item.id}')" aria-label="快速勾選">${iconText}</button>
-    <div class="item-main" onclick="openEdit('${item.id}')">
-      <div class="item-name">${esc(item.name)}</div>
-      <div class="item-meta">${esc(meta || "點一下編輯詳細資料")}</div>
-    </div>
-    <div class="item-right">
-      <span class="qty">×${Number(item.qty) || 0}</span>
-      <button class="edit-arrow" onclick="openEdit('${item.id}')">›</button>
-    </div>`;
-  return el;
-}
-function toggleCategory(encoded) {
-  const category = decodeURIComponent(encoded);
-  if(openCategories.has(category)) openCategories.delete(category);
-  else openCategories.add(category);
-  render();
-}
-function collapseAll() {
-  openCategories.clear();
-  render();
-}
-function quickToggle(id) {
-  const item = items.find(x => x.id === id);
-  if(!item) return;
-  item.status = item.status === "✔ 已準備" ? "待準備" : "✔ 已準備";
-  saveItems();
-  render();
-}
-function setFilter(filter, btn) {
-  currentFilter = filter;
-  document.querySelectorAll(".filter").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-  openCategories.clear();
-  render();
-}
-function updateSummary() {
-  const active = items.filter(x => x.status !== "✖ 不攜帶");
-  const ready = active.filter(x => x.status === "✔ 已準備").length;
-  const todo = active.filter(x => x.status === "待準備").length;
-  const buy = active.filter(x => x.status === "待購買").length;
-  const percent = active.length ? Math.round(ready / active.length * 100) : 0;
-  document.getElementById("progressBar").style.width = percent + "%";
-  document.getElementById("statReady").textContent = `已完成 ${percent}%`;
-  document.getElementById("statTodo").textContent = `待準備 ${todo}`;
-  document.getElementById("statBuy").textContent = `待購買 ${buy}`;
-}
-function populateCategories(selectId) {
-  const el = document.getElementById(selectId);
-  el.innerHTML = CATEGORIES.map(c => `<option>${c}</option>`).join("");
-}
-function openAdd() {
-  populateCategories("editCategory");
-  document.getElementById("itemModalTitle").textContent = "新增項目";
-  document.getElementById("editId").value = "";
-  document.getElementById("editCategory").value = CATEGORIES[0];
-  document.getElementById("editName").value = "";
-  document.getElementById("editQty").value = 1;
-  document.getElementById("editStatus").value = "待準備";
-  document.getElementById("editLocation").value = "托運行李";
-  document.getElementById("editNote").value = "";
-  document.getElementById("deleteBtn").classList.add("hidden");
-  showSheet("itemModal");
-}
-function openEdit(id) {
-  const item = items.find(x => x.id === id);
-  if(!item) return;
-  populateCategories("editCategory");
-  document.getElementById("itemModalTitle").textContent = "編輯項目";
-  document.getElementById("editId").value = item.id;
-  document.getElementById("editCategory").value = item.category;
-  document.getElementById("editName").value = item.name;
-  document.getElementById("editQty").value = item.qty;
-  document.getElementById("editStatus").value = item.status;
-  document.getElementById("editLocation").value = item.location;
-  document.getElementById("editNote").value = item.note || "";
-  document.getElementById("deleteBtn").classList.remove("hidden");
-  showSheet("itemModal");
-}
-function saveCurrent() {
-  const name = document.getElementById("editName").value.trim();
-  if(!name) { alert("請輸入項目名稱"); return; }
-  const id = document.getElementById("editId").value;
-  const payload = {
-    category: document.getElementById("editCategory").value,
-    name,
-    qty: Number(document.getElementById("editQty").value || 1),
-    status: document.getElementById("editStatus").value,
-    location: document.getElementById("editLocation").value,
-    note: document.getElementById("editNote").value.trim()
-  };
-  if(id) {
-    const item = items.find(x => x.id === id);
-    Object.assign(item, payload);
-  } else {
-    items.push({id:"item_"+Date.now(), ...payload});
-  }
-  saveItems();
-  hideSheet("itemModal");
-  render();
-}
-function deleteCurrent() {
-  const id = document.getElementById("editId").value;
-  if(id && confirm("確定刪除這個項目嗎？")) {
-    items = items.filter(x => x.id !== id);
-    saveItems();
-    hideSheet("itemModal");
-    render();
-  }
-}
-function showSheet(id) {
-  document.getElementById(id).classList.add("show");
-  document.body.style.overflow = "hidden";
-}
-function hideSheet(id) {
-  document.getElementById(id).classList.remove("show");
-  document.body.style.overflow = "";
-}
-function closeSheet(e,id) {
-  if(e.target.id === id) hideSheet(id);
-}
-function toggleMenu() {
-  document.getElementById("menu").classList.toggle("show");
-}
-function closeMenu(e) {
-  if(e.target.id === "menu") document.getElementById("menu").classList.remove("show");
-}
-function exportBackup() {
-  document.getElementById("menu").classList.remove("show");
-  const payload = {
-    version:2,
-    exportedAt:new Date().toISOString(),
-    info:JSON.parse(localStorage.getItem(INFO_KEY) || "{}"),
-    items
-  };
-  const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "出國行李清單_v2_備份.json";
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
-function importBackup(event) {
-  document.getElementById("menu").classList.remove("show");
-  const file = event.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const data = JSON.parse(reader.result);
-      if(!Array.isArray(data.items)) throw new Error();
-      items = data.items;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-      if(data.info) localStorage.setItem(INFO_KEY, JSON.stringify(data.info));
-      loadInfo();
-      render();
-      alert("匯入完成");
-    } catch(e) {
-      alert("備份檔格式不正確");
-    }
-  };
-  reader.readAsText(file);
-  event.target.value = "";
-}
-function resetAll() {
-  document.getElementById("menu").classList.remove("show");
-  if(!confirm("確定恢復原始範本嗎？目前修改會被清除。")) return;
-  items = cloneDefault();
-  localStorage.removeItem(INFO_KEY);
-  ["destination","departureDate","returnDate","companions","weather","outbound","outboundTime","returnFlight","returnTime","carryOn","checkedBag"].forEach(id => { const el=document.getElementById(id); if(el) el.value=""; });
-  saveItems();
-  updateTripSummary();
-  render();
+  g.appendChild(d);
+ }
+ settings();
 }
 
-function getInfoValue(id) {
-  const el = document.getElementById(id);
-  return el && el.value.trim() ? el.value.trim() : "—";
-}
-function printStatusMark(status) {
-  if(status === "✔ 已準備") return "✓";
-  if(status === "待購買") return "購";
-  if(status === "✖ 不攜帶") return "—";
-  return "";
-}
-function buildPrintView() {
-  const activeItems = items.filter(x => x.status !== "✖ 不攜帶");
-  const ready = activeItems.filter(x => x.status === "✔ 已準備").length;
-  const buy = activeItems.filter(x => x.status === "待購買").length;
-  const percent = activeItems.length ? Math.round(ready / activeItems.length * 100) : 0;
-
-  const infoRows = [
-    ["目的地", getInfoValue("destination")],
-    ["出發日期", getInfoValue("departureDate")],
-    ["回程日期", getInfoValue("returnDate")],
-    ["天數", getTripDaysText() || "—"],
-    ["同行", getInfoValue("companions") === "—" ? "—" : getInfoValue("companions") + " 人"],
-    ["天氣", getInfoValue("weather")],
-    ["去程航班", getInfoValue("outbound")],
-    ["去程時間", getInfoValue("outboundTime")],
-    ["回程航班", getInfoValue("returnFlight")],
-    ["回程時間", getInfoValue("returnTime")],
-    ["隨身行李", getInfoValue("carryOn")],
-    ["托運行李", getInfoValue("checkedBag")]
-  ];
-
-  const categoryHtml = CATEGORIES.map(category => {
-    const rows = items.filter(x => x.category === category);
-    if(!rows.length) return "";
-    const readyCount = rows.filter(x => x.status === "✔ 已準備").length;
-    const carryingCount = rows.filter(x => x.status !== "✖ 不攜帶").length;
-
-    const itemHtml = rows.map(item => {
-      const cls = item.status === "待購買" ? "buy" :
-                  item.status === "✖ 不攜帶" ? "skip" : "";
-      const details = [item.location, item.note].filter(Boolean).join("・");
-      return `
-        <div class="print-item ${cls}">
-          <div class="print-check">${printStatusMark(item.status)}</div>
-          <div>
-            <div class="print-item-name">${esc(item.name)}</div>
-            ${details ? `<div class="print-item-meta">${esc(details)}</div>` : ""}
-          </div>
-          <div class="print-item-qty">×${Number(item.qty) || 0}</div>
-        </div>`;
-    }).join("");
-
-    const longClass = items.length > 24 ? " long-category" : "";
-    return `
-      <section class="print-category${longClass}">
-        <div class="print-category-title">
-          <span>${esc(category)}</span>
-          <span>${readyCount}／${carryingCount}</span>
-        </div>
-        <div class="print-category-body">${itemHtml}</div>
-      </section>`;
-  }).join("");
-
-  document.getElementById("printView").innerHTML = `
-    <div class="print-head">
-      <h1>✈️ 出國行李清單</h1>
-      <div class="print-progress">完成 ${ready}／${activeItems.length}（${percent}%）・待購買 ${buy}</div>
-    </div>
-    <div class="print-info">
-      ${infoRows.map(([label,value]) => `
-        <div class="print-info-item">
-          <span class="print-info-label">${label}：</span>
-          <span class="print-info-value">${esc(value)}</span>
-        </div>`).join("")}
-      <div class="print-alert">提醒：出發前請確認護照效期、簽證、液體、行動電源、食品、藥品及航空公司最新規定。</div>
-    </div>
-    <div class="print-columns">${categoryHtml}</div>
-    <div class="print-foot">列印時間：${new Date().toLocaleString("zh-TW")}</div>`;
-}
-function printChecklist() {
-  document.getElementById("menu").classList.remove("show");
-  buildPrintView();
-  setTimeout(() => window.print(), 80);
+function bindGestures(el,i){
+ const state={pointers:new Map(),moved:false,lastDist:0,startZoom:slots[i].zoom};
+ gesture.set(el,state);
+ el.addEventListener('pointerdown',e=>{
+   if(e.target.closest('.remove'))return;
+   selectSlot(i);e.preventDefault();el.setPointerCapture?.(e.pointerId);
+   state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY});
+   state.moved=false;
+   if(state.pointers.size===2){const p=[...state.pointers.values()];state.lastDist=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);state.startZoom=slots[i].zoom}
+ });
+ el.addEventListener('pointermove',e=>{
+   const p=state.pointers.get(e.pointerId);if(!p)return;e.preventDefault();
+   p.x=e.clientX;p.y=e.clientY;
+   if(state.pointers.size===1){
+     const dx=e.clientX-p.lastX,dy=e.clientY-p.lastY;
+     if(Math.abs(dx)+Math.abs(dy)>1)state.moved=true;
+     slots[i].x=clamp(slots[i].x+dx/el.clientWidth*2,-1,1);
+     slots[i].y=clamp(slots[i].y+dy/el.clientHeight*2,-1,1);
+     p.lastX=e.clientX;p.lastY=e.clientY;
+   }else if(state.pointers.size>=2){
+     const ps=[...state.pointers.values()];const dist=Math.hypot(ps[0].x-ps[1].x,ps[0].y-ps[1].y);
+     if(state.lastDist>0)slots[i].zoom=clamp(state.startZoom*(dist/state.lastDist),1,3);
+     state.moved=true;
+   }
+   applyTransform(el.querySelector('video'),slots[i]);updateSettingValues(i);
+ });
+ const end=e=>{state.pointers.delete(e.pointerId);if(state.pointers.size<2){state.lastDist=0;state.startZoom=slots[i].zoom}};
+ el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+ el.addEventListener('wheel',e=>{e.preventDefault();selectSlot(i);slots[i].zoom=clamp(slots[i].zoom+(e.deltaY<0?.08:-.08),1,3);applyTransform(el.querySelector('video'),slots[i]);updateSettingValues(i)},{passive:false});
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadInfo();
-  ["destination","departureDate","returnDate","companions","weather","outbound","outboundTime","returnFlight","returnTime","carryOn","checkedBag"].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.addEventListener("input", saveInfo);
-  });
-  render();
-});
+function updateSettingValues(i){
+ const card=document.querySelector(`.card[data-i="${i}"]`);if(!card)return;const s=slots[i];
+ const z=card.querySelector('.zoom'),x=card.querySelector('.posx'),y=card.querySelector('.posy');
+ if(z)z.value=s.zoom;if(x)x.value=s.x;if(y)y.value=s.y;
+ card.querySelector('.zt').textContent=s.zoom.toFixed(2)+'×';
+}
+
+function settings(){
+ const w=$("#settings");w.innerHTML="";
+ for(let i=0;i<layout;i++){
+  const s=slots[i],c=document.createElement("div");c.className="card";c.dataset.i=i;
+  c.innerHTML=`<div class="card-title">第 ${i+1} 格｜${s.file?s.file.name:"尚未加入"}</div>
+  <div class="row"><span>截取起點</span><span><input class="start" type="number" min="0" step=".1" value="${s.start}"> 秒</span></div>
+  <div class="row"><span>縮放</span><input class="zoom" type="range" min="1" max="3" step=".01" value="${s.zoom}"></div>
+  <div class="row"><span>縮放倍率</span><span class="zt">${s.zoom.toFixed(2)}×</span></div>
+  <div class="row"><span>水平位置</span><input class="posx" type="range" min="-1" max="1" step=".01" value="${s.x}"></div>
+  <div class="row"><span>垂直位置</span><input class="posy" type="range" min="-1" max="1" step=".01" value="${s.y}"></div>
+  <div class="row"><span>音量</span><input class="vol" type="range" min="0" max="2" step=".1" value="${s.volume}"></div>
+  <div class="row"><span>目前音量</span><span class="vt">${s.volume.toFixed(1)}</span></div>
+  <div class="row"><span>聲音</span><label><input class="mute" type="checkbox" ${s.mute?"checked":""}> 靜音</label></div>
+  <div class="adjust-actions"><button class="center">畫面置中</button><button class="change" ${s.file?'':'disabled'}>更換影片</button></div>`;
+  c.querySelector(".start").oninput=e=>s.start=Math.max(0,+e.target.value||0);
+  c.querySelector(".zoom").oninput=e=>{s.zoom=+e.target.value;c.querySelector('.zt').textContent=s.zoom.toFixed(2)+'×';refreshSlot(i)};
+  c.querySelector(".posx").oninput=e=>{s.x=+e.target.value;refreshSlot(i)};
+  c.querySelector(".posy").oninput=e=>{s.y=+e.target.value;refreshSlot(i)};
+  c.querySelector(".vol").oninput=e=>{s.volume=+e.target.value;c.querySelector(".vt").textContent=s.volume.toFixed(1)};
+  c.querySelector(".mute").onchange=e=>s.mute=e.target.checked;
+  c.querySelector('.center').onclick=()=>{s.zoom=1;s.x=0;s.y=0;render()};
+  c.querySelector('.change').onclick=()=>pick(i);
+  c.onclick=()=>{selectedIndex=i;document.querySelectorAll('.slot').forEach((el,j)=>el.classList.toggle('selected',j===i))};
+  w.appendChild(c);
+ }
+}
+function refreshSlot(i){const el=document.querySelector(`.slot[data-index="${i}"] video`);if(el)applyTransform(el,slots[i])}
+function pick(i){pickIndex=i;selectedIndex=i;$("#picker").value="";$("#picker").click()}
+$("#picker").onchange=e=>{const f=e.target.files[0];if(!f)return;const s=slots[pickIndex];if(s.url)URL.revokeObjectURL(s.url);Object.assign(s,{file:f,url:URL.createObjectURL(f),start:0,zoom:1,x:0,y:0});render()}
+function clearSlot(i){const s=slots[i];if(s.url)URL.revokeObjectURL(s.url);Object.assign(s,{file:null,url:"",start:0,volume:1,mute:false,zoom:1,x:0,y:0});render()}
+$("#layouts").onclick=e=>{if(!e.target.dataset.n)return;layout=+e.target.dataset.n;selectedIndex=Math.min(selectedIndex,layout-1);[...e.currentTarget.children].forEach(b=>b.classList.toggle("active",b===e.target));render()}
+$("#presets").onclick=e=>{if(!e.target.dataset.s)return;$("#duration").value=e.target.dataset.s;[...e.currentTarget.children].forEach(b=>b.classList.toggle("active",b===e.target))}
+$("#preview").onclick=async()=>{const vs=[...document.querySelectorAll(".slot video")];vs.forEach((v,i)=>{v.currentTime=slots[i].start;v.muted=slots[i].mute;v.volume=Math.min(1,slots[i].volume)});await Promise.allSettled(vs.map(v=>v.play()))}
+$("#pause").onclick=()=>document.querySelectorAll(".slot video").forEach(v=>v.pause());
+
+function waitEvent(el,name,timeout=12000){return new Promise((res,rej)=>{if(name==="loadedmetadata"&&el.readyState>=1)return res();const t=setTimeout(()=>rej(new Error("影片載入逾時")),timeout);el.addEventListener(name,()=>{clearTimeout(t);res()},{once:true})})}
+function drawAdjusted(ctx,v,x,y,w,h,s){
+ const base=Math.max(w/v.videoWidth,h/v.videoHeight);const scale=base*s.zoom;
+ const dw=v.videoWidth*scale,dh=v.videoHeight*scale;
+ const maxX=Math.max(0,(dw-w)/2),maxY=Math.max(0,(dh-h)/2);
+ const dx=x+(w-dw)/2+s.x*maxX,dy=y+(h-dh)/2+s.y*maxY;
+ ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();ctx.drawImage(v,dx,dy,dw,dh);ctx.restore();
+}
+async function buildAudioPlayers(active){
+ const pool=$("#audioPool");pool.innerHTML="";const audioVideos=[];
+ for(let i=0;i<active.length;i++){const v=document.createElement("video");v.src=active[i].url;v.preload="auto";v.playsInline=true;pool.appendChild(v);audioVideos.push(v)}
+ await Promise.all(audioVideos.map(v=>waitEvent(v,"loadedmetadata")));return audioVideos;
+}
+
+$("#export").onclick=async()=>{
+ const active=slots.slice(0,layout);if(active.some(s=>!s.file)){alert(`請先加入 ${layout} 支影片`);return}
+ const sec=Math.max(1,Math.min(30,+$("#duration").value||10)),q=+$("#quality").value,btn=$("#export");btn.disabled=true;$("#result").style.display="none";$("#bar").style.width="0%";let audioCtx=null;
+ try{
+  const displayVids=[...document.querySelectorAll(".slot video")];await Promise.all(displayVids.map(v=>waitEvent(v,"loadedmetadata")));
+  let W,H,cols,rows;if(layout<4){W=q;H=Math.round(q*16/9);cols=1;rows=layout}else{W=q;H=q;cols=2;rows=2}W-=W%2;H-=H%2;
+  const cv=$("#canvas"),ctx=cv.getContext("2d");cv.width=W;cv.height=H;const stream=cv.captureStream(30);
+  const audioVids=await buildAudioPlayers(active);audioCtx=new AudioContext();const dest=audioCtx.createMediaStreamDestination();
+  audioVids.forEach((v,i)=>{v.currentTime=active[i].start;v.muted=false;const src=audioCtx.createMediaElementSource(v),gain=audioCtx.createGain();gain.gain.value=active[i].mute?0:active[i].volume;src.connect(gain).connect(dest)});
+  dest.stream.getAudioTracks().forEach(t=>stream.addTrack(t));displayVids.forEach((v,i)=>{v.currentTime=active[i].start;v.muted=true});
+  const types=["video/mp4;codecs=avc1.42E01E,mp4a.40.2","video/mp4","video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus"];const mime=types.find(MediaRecorder.isTypeSupported)||"";
+  const rec=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:q===720?5000000:3000000}:{}),chunks=[];rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};const stopped=new Promise(r=>rec.onstop=r);
+  await audioCtx.resume();await Promise.all([...displayVids,...audioVids].map(v=>v.play()));rec.start(250);
+  const start=performance.now();$("#status").textContent="錄製中 0%";
+  await new Promise(resolve=>{function frame(now){const p=Math.min(1,(now-start)/(sec*1000));ctx.fillStyle="#000";ctx.fillRect(0,0,W,H);const cw=W/cols,ch=H/rows;displayVids.forEach((v,i)=>drawAdjusted(ctx,v,(i%cols)*cw,Math.floor(i/cols)*ch,cw,ch,active[i]));$("#bar").style.width=`${Math.round(p*100)}%`;$("#status").textContent=`錄製中 ${Math.round(p*100)}%`;if(p<1)requestAnimationFrame(frame);else resolve()}requestAnimationFrame(frame)});
+  rec.stop();[...displayVids,...audioVids].forEach(v=>v.pause());await stopped;
+  const blob=new Blob(chunks,{type:mime||"video/webm"});if(outURL)URL.revokeObjectURL(outURL);outURL=URL.createObjectURL(blob);const ext=mime.includes("mp4")?"mp4":"webm";
+  $("#outVideo").src=outURL;$("#download").href=outURL;$("#download").download=`影片拼接.${ext}`;$("#download").textContent=`下載 ${ext.toUpperCase()}`;$("#result").style.display="block";$("#status").textContent=`完成（${ext.toUpperCase()}）`;$("#bar").style.width="100%";
+ }catch(err){console.error(err);alert("輸出失敗："+err.message);$("#status").textContent="輸出失敗"}finally{if(audioCtx){try{await audioCtx.close()}catch{}}$("#audioPool").innerHTML="";btn.disabled=false}
+};
+render();
 </script>
-</body>
-</html>
+</body></html>
